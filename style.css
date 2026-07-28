@@ -1,0 +1,92 @@
+ body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #020617, #312e81, #581c87);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Main Card */
+  .container {
+    width: 90%;
+    max-width: 400px;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(15px);
+    padding: 30px;
+    border-radius: 25px;
+ box-shadow:
+    0 0 20px rgba(167,139,250,0.35),
+    0 15px 35px rgba(0,0,0,0.5);
+    text-align: center;
+    border: 2px solid rgba(167,139,250,0.8);
+    animation: slide 0.6s ease;
+}
+
+/* Animation */
+@keyframes slide {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Logo / Heading */
+h1 {
+    color: white;
+    font-size: 36px;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+/* Input */
+input {
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+    box-sizing: border-box;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+    background: rgba(255,255,255,0.9);
+    font-size: 15px;
+}
+
+input:focus {
+    box-shadow: 0 0 10px #a78bfa;
+}
+
+/* Button */
+ button {
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #8b5cf6, #4f46e5);
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    transition: 0.3s;
+    box-shadow: 0 5px 15px rgba(139,92,246,0.4);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(139,92,246,0.6);
+}
+
+button:active {
+    transform: scale(0.97);
+}
+
+/* Status */
+#status {
+    color: #ffcccc;
+    font-size: 14px;
+}

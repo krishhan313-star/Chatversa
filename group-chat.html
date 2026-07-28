@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Group Chat - Chatversa</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#0f172a;
+    color:white;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+}
+
+/* Header */
+.header{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:15px;
+    background:#1e293b;
+    border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.back-btn{
+    font-size:24px;
+    cursor:pointer;
+}
+
+.group-info h3{
+    font-size:18px;
+}
+
+.group-info p{
+    color:#a78bfa;
+    font-size:13px;
+}
+
+/* Chat Area */
+.chat-box{
+    flex:1;
+    padding:15px;
+    overflow-y:auto;
+}
+
+/* Messages */
+.message{
+    max-width:75%;
+    padding:12px;
+    border-radius:15px;
+    margin:10px 0;
+}
+
+.received{
+    background:#334155;
+}
+
+.sent{
+    background:#4f46e5;
+    margin-left:auto;
+}
+
+/* Input Area */
+.input-area{
+    display:flex;
+    padding:12px;
+    background:#1e293b;
+    gap:10px;
+}
+
+.input-area input{
+   

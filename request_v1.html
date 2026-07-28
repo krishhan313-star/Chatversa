@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Request Section - Chatversa</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#0f172a;
+color:white;
+}
+
+.header{
+background:#1e293b;
+padding:18px;
+text-align:center;
+font-size:24px;
+font-weight:bold;
+box-shadow:0 5px 15px rgba(0,0,0,.35);
+}
+
+.container{
+padding:20px;
+}
+
+.request-card{
+background:#1e293b;
+padding:18px;
+border-radius:16px;
+margin-bottom:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.25);
+}
+
+.user-name{
+font-size:18px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.status{
+color:#94a3b8;
+font-size:14px;
+margin-bottom:15px;
+}
+
+.btn-row{
+display:flex;
+gap:10px;
+}
+
+.accept-btn{
+flex:1;
+background:#16a34a;
+border:none;
+padding:12px;
+border-radius:10px;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+.reject-btn{
+flex:1;
+background:#dc2626;
+border:none;
+padding:12px;
+border-radius:10px;
+color:white;
+font-weight:bold;
+cursor:pointer;
+}
+
+.back-btn{
+width:100%;
+margin-top:20px;
+padding:14px;
+border:none;
+border-radius:12px;
+background:#4f46e5;
+color:white;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+📩 Request Section
+</div>
+
+<div class="container">
+
+<div id="requestList">
+<input
+id="searchInput"
+type="text"
+placeholder="🔍 Search username..."
+style="display:none;">
+<div class="request-card">
+
+<div class="user-name">
+Loading Requests...
+</div>
+
+<div class="status">
+Please wait...
+</div>
+
+</div>
+
+</div>
+
+<button
+class="back-btn"
+onclick="location.href='home.html'">
+🏠 Back To Home
+</button>
+
+</div>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyDe3ahkE9wEpUOYwt8dnUiFhUAYI1X3i7E",
+  authDomain: "chatversa-ca526.firebaseapp.com",
+  projectId: "chatversa-ca526",
+  storageBucket: "chatversa-ca526.firebasestorage.app",
+  messagingSenderId: "735371121479",
+  appId: "1:735371121479:web:230385acffc8a7c3e8f262"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const requestList = document.getElementById("requestList");
+
+let currentUser = null;
+
+onAuthStateChanged(auth, (user) => {
+
+    if (!user) {
+        location.href = "index.html";
+        return;
+    }
+
+    currentUser = user;
+
+    loadRequests();
+
+});
+
+async function loadRequests(){
+
+    requestList.innerHTML = "";
+
+    const snapshot = await getDocs(collection(db,"requests"));
+
+    let found = false;
+        snapshot.forEach(async (requestDoc)=>{
+
+        const request = requestDoc.data();
+
+         if(
+    request.receiverId !== currentUser.uid ||
+    request.status !== "pending"
+) return;
+
+        found = true;
+
+          const senderRef = doc(db, "users", request.senderId);
+const senderSnap = await getDoc(senderRef);
+
+let senderName = "Unknown User";
+
+if (senderSnap.exists()) {
+    const senderData = senderSnap.data();
+    senderName = senderData.username || senderData.email.split("@")[0];
+}
+        requestList.innerHTML += `
+
+        <div class="request-card">
+
+             <h2>👤 ${senderName}</h2>
+
+            <div class="status">
+                Wants to chat with you.
+            </div>
+
+            <div class="btn-row">
+
+                <button
+                class="accept-btn"
+                onclick="acceptRequest('${requestDoc.id}')">
+                ✅ Accept
+                </button>
+
+                <button
+                class="reject-btn"
+                onclick="rejectRequest('${requestDoc.id}')">
+                ❌ Reject
+                </button>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+    if(!found){
+
+        requestList.innerHTML = `
+
+        <div class="request-card">
+
+            <div class="user-name">
+                No Requests
+            </div>
+
+            <div class="status">
+                You don't have any pending requests.
+            </div>
+
+        </div>
+
+        `;
+
+    }
+
+}
+
+window.acceptRequest = async function(id){
+
+    await updateDoc(doc(db,"requests",id),{
+
+        status:"accepted"
+
+    });
+
+    alert("✅ Request Accepted");
+
+    loadRequests();
+
+}
+
+window.rejectRequest = async function(id){
+
+    await updateDoc(doc(db,"requests",id),{
+
+        status:"rejected"
+
+    });
+
+    alert("❌ Request Rejected");
+
+    loadRequests();
+
+}
+
+</script>
+
+</body>
+</html>

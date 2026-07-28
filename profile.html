@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile - Chatversa</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#0f172a;
+color:white;
+}
+
+.header{
+background:#1e293b;
+padding:15px;
+text-align:center;
+font-size:22px;
+font-weight:bold;
+box-shadow:0 5px 15px rgba(0,0,0,.3);
+}
+
+.profile-container{
+padding:25px;
+text-align:center;
+}
+
+.avatar{
+width:120px;
+height:120px;
+border-radius:50%;
+background:linear-gradient(135deg,#8b5cf6,#4f46e5);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:50px;
+font-weight:bold;
+margin:auto;
+box-shadow:0 0 20px rgba(139,92,246,.5);
+}
+
+.change-pic{
+margin-top:15px;
+background:#4f46e5;
+border:none;
+padding:10px 20px;
+border-radius:10px;
+color:white;
+cursor:pointer;
+}
+
+.info-card{
+margin-top:25px;
+background:#1e293b;
+padding:18px;
+border-radius:18px;
+text-align:left;
+}
+
+.info-item{
+margin:18px 0;
+}
+
+.label{
+font-size:13px;
+color:#94a3b8;
+}
+
+.value{
+font-size:17px;
+font-weight:bold;
+margin-top:4px;
+word-break:break-word;
+}
+
+.action-btn{
+width:100%;
+margin-top:15px;
+padding:14px;
+border:none;
+border-radius:14px;
+background:linear-gradient(135deg,#8b5cf6,#4f46e5);
+color:white;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.logout-btn{
+background:#dc2626;
+}
+
+.modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.65);
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+.modal-content{
+background:#1e293b;
+width:90%;
+max-width:340px;
+padding:20px;
+border-radius:18px;
+text-align:center;
+animation:popup .25s ease;
+box-shadow:0 0 25px rgba(0,0,0,.45);
+}
+
+.modal-content h2{
+color:white;
+margin-bottom:20px;
+}
+
+.popup-btn{
+width:100%;
+padding:14px;
+margin:8px 0;
+border:none;
+border-radius:12px;
+background:#4f46e5;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+.popup-btn:hover{
+background:#4338ca;
+}
+
+.remove-btn{
+background:#dc2626;
+}
+
+.close-btn{
+background:#475569;
+}
+
+@keyframes popup{
+from{
+opacity:0;
+transform:scale(.8);
+}
+to{
+opacity:1;
+transform:scale(1);
+}
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+👤 My Profile
+</div>
+
+<div class="profile-container">
+
+<div class="avatar" id="avatar">K</div>
+
+<input
+type="file"
+id="profilePicInput"
+accept="image/*"
+style="display:none"
+onchange="previewProfilePic(event)">
+
+<button class="action-btn" onclick="showProfilePicOptions()">
+📷 Change Profile Picture
+</button>
+
+<div class="info-card">
+
+<div class="info-item">
+<div class="label">Username</div>
+<div class="value" id="username">Loading...</div>
+</div>
+
+<div class="info-item">
+<div class="label">Email</div>
+<div class="value" id="email">Loading...</div>
+</div>
+
+<div class="info-item">
+<div class="label">UID</div>
+<div class="value" id="uid">Loading...</div>
+</div>
+
+<div class="info-item">
+<div class="label">Role</div>
+<div class="value" id="role">Loading...</div>
+</div>
+
+<div class="info-item">
+<div class="label">Joined</div>
+<div class="value" id="joined">Loading...</div>
+</div>
+
+<div class="info-item">
+<div class="label">Bio</div>
+<textarea id="bio" style="width:100%;height:80px;background:#334155;color:white;border:none;border-radius:10px;padding:10px;resize:none;">No bio yet...</textarea>
+
+<button class="action-btn" onclick="saveBio()">
+💾 Save Profile
+</button>
+
+<div id="picOptionsBox" class="modal">
+<div class="modal-content">
+<h2>📷 Profile Picture</h2>
+
+<button class="popup-btn" onclick="uploadPicture()">📷 Upload Picture</button>
+<button class="popup-btn" onclick="changePicture()">🔄 Change Picture</button>
+<button class="popup-btn remove-btn" onclick="removePicture()">🗑️ Remove Picture</button>
+<button class="popup-btn close-btn" onclick="closePicOptions()">✖ Close</button>
+</div>
+</div>
+
+<button class="action-btn" onclick="window.location.href='home.html'">
+🏠 Back to Home
+</button>
+
+</div>
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDe3ahkE9wEpUOYwt8dnUiFhUAYI1X3i7E",
+  authDomain: "chatversa-ca526.firebaseapp.com",
+  projectId: "chatversa-ca526",
+  storageBucket: "chatversa-ca526.firebasestorage.app",
+  messagingSenderId: "735371121479",
+  appId: "1:735371121479:web:230385acffc8a7c3e8f262"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Cloudinary Details
+const CLOUD_NAME = "hxa9te65";
+const UPLOAD_PRESET = "chatversa";
+
+let currentUser = null;
+
+onAuthStateChanged(auth, async (user) => {
+  currentUser = user;
+  if (!user) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  document.getElementById("email").innerText = user.email;
+  document.getElementById("uid").innerText = user.uid;
+
+  const avatar = document.getElementById("avatar");
+  avatar.innerText = user.email.charAt(0).toUpperCase();
+
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+
+  if (snap.exists()) {
+    const data = snap.data();
+
+    document.getElementById("username").innerText = data.username || user.email.split("@")[0];
+    document.getElementById("role").innerText = data.role || "User";
+    document.getElementById("bio").value = data.bio || "No bio yet...";
+
+    if (data.createdAt) {
+      document.getElementById("joined").innerText = data.createdAt.toDate().toLocaleDateString();
+    } else {
+      document.getElementById("joined").innerText = new Date(user.metadata.creationTime).toLocaleDateString();
+    }
+
+    // Cloudinary URL Firestore se load karke avatar par dikhana
+    if (data.photoURL) {
+      avatar.innerText = "";
+      avatar.style.backgroundImage = `url(${data.photoURL})`;
+      avatar.style.backgroundSize = "cover";
+      avatar.style.backgroundPosition = "center";
+    }
+  } else {
+    document.getElementById("username").innerText = user.email.split("@")[0];
+    document.getElementById("role").innerText = "User";
+    document.getElementById("joined").innerText = new Date(user.metadata.creationTime).toLocaleDateString();
+  }
+});
+
+// Save Bio
+window.saveBio = async function () {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  await setDoc(doc(db, "users", user.uid), {
+    bio: document.getElementById("bio").value
+  }, { merge: true });
+
+  alert("✅ Bio updated successfully!");
+};
+
+// UI Modal Functions
+window.showProfilePicOptions = function() {
+    document.getElementById("picOptionsBox").style.display = "flex";
+};
+
+window.closePicOptions = function() {
+    document.getElementById("picOptionsBox").style.display = "none";
+};
+
+window.uploadPicture = function() {
+    document.getElementById("profilePicInput").click();
+};
+
+window.changePicture = function() {
+    document.getElementById("profilePicInput").click();
+};
+
+window.removePicture = async function() {
+    let avatar = document.getElementById("avatar");
+    avatar.style.backgroundImage = "none";
+    avatar.innerText = document.getElementById("username").innerText.charAt(0).toUpperCase();
+
+    const user = auth.currentUser;
+    if (user) {
+        await setDoc(doc(db, "users", user.uid), { photoURL: "" }, { merge: true });
+    }
+
+    closePicOptions();
+};
+
+// Cloudinary Upload & Permanent Database Save Function
+window.previewProfilePic = async function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    closePicOptions();
+    
+    // Cloudinary Upload Call
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", UPLOAD_PRESET);
+
+    try {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+            method: "POST",
+            body: formData
+        });
+        const data = await res.json();
+        
+        if (data.secure_url) {
+            const imageUrl = data.secure_url;
+
+            // UI Avatar Update
+            let avatar = document.getElementById("avatar");
+            avatar.innerText = "";
+            avatar.style.backgroundImage = `url(${imageUrl})`;
+            avatar.style.backgroundSize = "cover";
+            avatar.style.backgroundPosition = "center";
+
+            // Save URL to Firestore database
+            const user = auth.currentUser;
+            if (user) {
+                await setDoc(doc(db, "users", user.uid), { photoURL: imageUrl }, { merge: true });
+                alert("✅ Profile picture uploaded & saved permanently!");
+            }
+        } else {
+            alert("❌ Upload failed. Please check your Cloudinary Unsigned Upload Preset settings.");
+        }
+    } catch (err) {
+        console.error("Cloudinary Upload Error:", err);
+        alert("❌ Error uploading image to Cloudinary.");
+    }
+};
+</script>
+
+</body>
+</html>

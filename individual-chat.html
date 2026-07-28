@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Individual Chat - Chatversa</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#0f172a;
+color:white;
+}
+
+.header{
+background:#1e293b;
+padding:16px;
+text-align:center;
+font-size:22px;
+font-weight:bold;
+}
+
+.container{
+padding:20px;
+}
+
+input{
+width:100%;
+padding:14px;
+border:none;
+border-radius:12px;
+background:#1e293b;
+color:white;
+font-size:16px;
+margin-bottom:20px;
+outline:none;
+}
+
+.user-card{
+background:#1e293b;
+padding:15px;
+border-radius:14px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:12px;
+}
+
+.user-name{
+font-size:17px;
+font-weight:bold;
+}
+
+button{
+background:#4f46e5;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:10px;
+cursor:pointer;
+}
+
+.back-btn{
+width:100%;
+margin-top:20px;
+padding:14px;
+font-size:16px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+👤 Individual Chat
+</div>
+
+<div class="container">
+
+ <input
+type="text"
+id="searchUser"
+placeholder="🔍 Search Username...">
+
+<div id="userList">
+
+<div class="user-card">
+<div class="user-name">
+No Users Found
+</div>
+
+<button disabled>
+Chat
+</button>
+
+</div>
+
+</div>
+
+<button
+class="back-btn"
+onclick="location.href='chat.html'">
+🏠 Back
+</button>
+
+</div>
+ <script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+ import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const firebaseConfig = {
+
+  apiKey: "AIzaSyDe3ahkE9wEpUOYwt8dnUiFhUAYI1X3i7E",
+  authDomain: "chatversa-ca526.firebaseapp.com",
+  projectId: "chatversa-ca526",
+  storageBucket: "chatversa-ca526.firebasestorage.app",
+  messagingSenderId: "735371121479",
+  appId: "1:735371121479:web:230385acffc8a7c3e8f262"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const db = getFirestore(app);
+
+let currentUser = null;
+
+const userList = document.getElementById("userList");
+onAuthStateChanged(auth, async (user) => {
+
+    if (!user) {
+        location.href = "index.html";
+        return;
+    }
+
+    currentUser = user;
+
+    loadUsers();
+
+});
+
+async function loadUsers(search = "") {
+
+    userList.innerHTML = "";
+
+    const snapshot = await getDocs(collection(db, "users"));
+
+    let found = false;
+
+    snapshot.forEach((docSnap) => {
+
+        if (docSnap.id === currentUser.uid) return;
+
+        const data = docSnap.data();
+
+         const username = data.username || (data.email ? data.email.split("@")[0] : "Unknown User");
+
+        if (username.toLowerCase().includes(search.toLowerCase())) {
+
+            found = true;
+
+            userList.innerHTML += `
+                <div class="user-card">
+
+                    <div class="user-name">
+                        ${username}
+                    </div>
+
+                    <button onclick="sendRequest('${docSnap.id}')">
+    Send Request
+</button>
+
+                </div>
+            `;
+        }
+
+    });
+
+    if (!found) {
+
+        userList.innerHTML = `
+            <div class="user-card">
+                <div class="user-name">No Users Found</div>
+            </div>
+        `;
+
+    }
+
+}
+document.getElementById("searchUser").addEventListener("input", (e) => {
+    loadUsers(e.target.value);
+});
+
+ window.sendRequest = async function(receiverId){
+
+    try{
+  const oldRequests = await getDocs(collection(db,"requests"));
+
+let alreadySent = false;
+
+oldRequests.forEach(docSnap => {
+
+    const req = docSnap.data();
+
+    if(
+        req.senderId === currentUser.uid &&
+        req.receiverId === receiverId &&
+        req.status === "pending"
+    ){
+        alreadySent = true;
+    }
+
+});
+
+if(alreadySent){
+    alert("Request already sent.");
+    return;
+}
+        await addDoc(collection(db,"requests"),{
+
+            senderId: currentUser.uid,
+            receiverId: receiverId,
+            status: "pending",
+            createdAt: serverTimestamp()
+
+        });
+
+        alert("✅ Chat request sent successfully!");
+
+    }catch(error){
+
+        console.error(error);
+        alert("❌ Failed to send request.");
+
+    }
+
+};
+
+</script>
+</body>
+</html>

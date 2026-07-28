@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatversa Home</title>
+
+    <style>
+         body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#0f172a;
+    color:white;
+}
+
+         header{
+    background:linear-gradient(135deg,#111827,#1e293b);
+    color:white;
+    padding:22px;
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    box-shadow:0 8px 20px rgba(0,0,0,.35);
+}
+
+        .menu {
+            padding: 20px;
+        }
+
+        .card{
+    background:#1e293b;
+    color:white;
+    margin:16px 0;
+    padding:18px;
+    border-radius:18px;
+    box-shadow:0 10px 20px rgba(0,0,0,.35);
+    cursor:pointer;
+    font-size:18px;
+    transition:.3s;
+    border:1px solid rgba(255,255,255,.08);
+}
+
+         .card:hover{
+    transform:translateY(-6px) scale(1.02);
+    background:#273449;
+    box-shadow:0 14px 30px rgba(0,0,0,.45);
+}
+
+         .modal-box{
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:#1e293b;
+    color:white;
+    padding:25px;
+    border-radius:18px;
+    width:300px;
+    box-shadow:0 15px 35px rgba(0,0,0,.45);
+    z-index:1000;
+}
+
+        .modal-box h3 {
+            margin-top: 0;
+            text-align: center;
+            color: #333;
+        }
+
+        .ai-option {
+            background: #4f46e5;
+            color: white;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        /* प्रोफाइल इंटरफ़ेस स्टाइल */
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        /* डीपी आइकन (अक्षर वाला गोला) */
+        .avatar-circle {
+            width: 80px;
+            height: 80px;
+            background: #4f46e5;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .extracted-username {
+            font-size: 20px;
+            font-weight: bold;
+            color: #222;
+            margin: 5px 0 2px 0;
+        }
+
+        .user-email-text {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+
+ .form-group input{
+    width:100%;
+    padding:12px;
+    box-sizing:border-box;
+    border:none;
+    border-radius:12px;
+    background:#334155;
+    color:white;
+    font-size:15px;
+    outline:none;
+    transition:.3s;
+}
+
+.form-group input:focus{
+    background:#475569;
+    box-shadow:0 0 12px rgba(108,77,255,.6);
+}
+
+        .btn-save{
+    background:linear-gradient(135deg,#6d28d9,#2563eb);
+    color:white;
+    border:none;
+    padding:14px;
+    width:100%;
+    border-radius:14px;
+    font-size:16px;
+    font-weight:bold;
+}
+
+        .btn-save:hover {
+            background: #4338ca;
+        }
+
+        .close {
+            margin-top: 15px;
+            color: #ef4444;
+            cursor: pointer;
+            font-weight: bold;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+ <header>
+    <div style="font-size:30px;">💬</div>
+
+    <div style="font-size:26px;font-weight:bold;letter-spacing:1px;">
+        Chatversa
+    </div>
+
+    <span id="adminBadge"
+    style="
+     style="
+display:none;
+background:linear-gradient(135deg,#fbbf24,#f59e0b);
+color:#111827;
+padding:6px 14px;
+border-radius:20px;
+font-size:13px;
+font-weight:bold;
+margin-top:10px;
+box-shadow:0 4px 10px rgba(251,191,36,.4);
+"
+
+</header>
+
+ <div class="menu">
+
+<div class="card" onclick="window.location.href='profile.html'">
+👤 My Profile
+</div>
+
+<div class="card" onclick="window.location.href='chats.html'">
+💬 Chats
+</div>
+
+<div class="card" onclick="showAI()">
+🤖 AI
+</div>
+
+<div class="card" onclick="window.location.href='requests.html'">
+📩 Request Section
+</div>
+
+<div class="card"
+id="adminPanelCard"
+style="display:none"
+onclick="window.location.href='admin.html'">
+👑 Admin Panel
+</div>
+
+<div class="card"
+onclick="window.location.href='play.html'">
+▶️ Chatversa Play
+</div>
+
+<div class="card"
+onclick="window.location.href='settings.html'">
+⚙️ Settings
+</div>
+
+<div class="card"
+onclick="confirmLogout()">
+🚪 Logout
+</div>
+
+</div>
+
+ <!-- AI Chat Box -->
+<div id="aiBox" class="modal-box">
+    <h3>Choose AI Companion</h3>
+<div class="ai-option" onclick="openAI('male')">
+👨 Male AI
+</div>
+
+<div class="ai-option" onclick="openAI('female')">
+👩 Female AI
+</div>
+
+<div class="close" onclick="closeAI()">
+Close
+</div>
+ 
+
+<!-- प्रोफाइल बॉक्स इंटरफ़ेस -->
+<div id="profileBox" class="modal-box">
+    <h3>User Profile</h3>
+    
+    <div class="profile-header">
+        <!-- ईमेल का पहला अक्षर -->
+         <div class="avatar-circle" id="userAvatar">
+    J
+</div>
+
+<input type="file" id="profilePicInput" accept="image/*" style="display:none;" onchange="previewProfilePic(event)">
+ 
+  <button class="profile-pic-main-btn" onclick="showPicOptions()">
+    📷 Change Profile Picture
+</button>
+        <div class="extracted-username" id="displayUsername">Username</div>
+        <!-- यूजर की ईमेल आईडी -->
+        <div class="user-email-text" id="displayEmail">user@example.com</div>
+    </div>
+
+    <!-- ईमेल चेंज करने के लिए इनपुट -->
+    <div class="form-group">
+        <label for="userEmailInput">Change Email Address</label>
+        <input type="email" id="userEmailInput" value="jethalal@chatversa.com">
+    </div>
+
+    <button class="btn-save" onclick="updateProfileFromEmail()">Update Profile</button>
+    <div class="close" onclick="closeProfile()">Cancel</div>
+</div>
+<div id="picOptionsBox" class="modal-box">
+    <h3>Profile Picture</h3>
+
+    <button class="profile-pic-btn" onclick="document.getElementById('profilePicInput').click()">
+        📷 Upload Picture
+    </button>
+
+    <button class="profile-pic-btn" onclick="document.getElementById('profilePicInput').click()">
+        🔄 Change Picture
+    </button>
+
+    <button class="profile-pic-btn" onclick="removeProfilePic()">
+        🗑️ Remove Picture
+    </button>
+
+    <div class="close" onclick="closePicOptions()">Close</div>
+</div>
+
+<script>
+// डिफ़ॉल्ट ईमेल
+let userEmail = localStorage.getItem("userEmail") || "Guest";
+
+// प्रोफाइल का डेटा प्रोसेस करने वाला फंक्शन
+function initProfile() {
+    let username = userEmail.split('@')[0]; 
+    let firstAlphabet = username.charAt(0).toUpperCase(); 
+    
+    // केवल प्रोफाइल बॉक्स के अंदर का डेटा अपडेट होगा
+    document.getElementById("userAvatar").innerText = firstAlphabet;
+    document.getElementById("displayUsername").innerText = username;
+    document.getElementById("displayEmail").innerText = userEmail;
+    document.getElementById("userEmailInput").value = userEmail;
+}
+
+// पेज लोड होते ही प्रोफाइल सेट करें
+window.onload = function () {
+    initProfile();
+
+    const role = localStorage.getItem("role");
+
+     if (role === "admin") {
+    document.getElementById("adminBadge").style.display = "inline";
+    document.getElementById("adminPanelCard").style.display = "block";
+     } 
+};
+
+function confirmLogout() {
+    let result = confirm("Are you sure you want to log out?");
+    if (result) {
+        window.location.href = "index.html";
+    }
+}
+ function showChats(){
+    document.getElementById("chatBox").style.display = "block";
+}
+
+function closeChats(){
+    document.getElementById("chatBox").style.display = "none";
+}
+    
+// AI Functions
+function showAI() { document.getElementById("aiBox").style.display = "block"; }
+function closeAI() { document.getElementById("aiBox").style.display = "none"; }
+
+// Profile Functions
+function showProfile() { document.getElementById("profileBox").style.display = "block"; }
+function closeProfile() { document.getElementById("profileBox").style.display = "none"; }
+function openAdminPanel() {
+    document.getElementById("adminPanel").style.display = "block";
+}
+
+function closeAdminPanel() {
+    document.getElementById("adminPanel").style.display = "none";
+}
+
+// ईमेल अपडेट होने पर अंदर का डेटा बदलेगा, होमपेज का बटन नहीं
+function updateProfileFromEmail() {
+    let inputEmail = document.getElementById("userEmailInput").value.trim();
+    
+    if(inputEmail === "" || !inputEmail.includes('@')) {
+        alert("Please enter a valid email address!");
+        return;
+    }
+    
+    userEmail = inputEmail;
+    initProfile();
+    
+    alert("Profile updated successfully!");
+    closeProfile();
+}
+function openAI(type){
+    window.location.href = "ai-chat.html?ai=" + type;
+}
+function previewProfilePic(event){
+    let image = URL.createObjectURL(event.target.files[0]);
+
+    let avatar = document.getElementById("userAvatar");
+
+    avatar.style.backgroundImage = `url(${image})`;
+    avatar.style.backgroundSize = "cover";
+    avatar.style.backgroundPosition = "center";
+    avatar.innerText = "";
+}
+
+function removeProfilePic(){
+    let avatar = document.getElementById("userAvatar");
+
+    avatar.style.backgroundImage = "none";
+    avatar.innerText = userEmail.charAt(0).toUpperCase();
+}
+function showPicOptions(){
+    document.getElementById("picOptionsBox").style.display = "block";
+}
+
+function closePicOptions(){
+    document.getElementById("picOptionsBox").style.display = "none";
+}
+ 
+</script>
+<div id="adminPanel" class="modal-box">
+    <h3>👑 Admin Panel</h3>
+
+    <div class="ai-option" onclick="alert('User Management Coming Soon')">
+        👥 User Management
+    </div>
+
+    <div class="ai-option" onclick="alert('Group Approval Coming Soon')">
+        👥 Group Approval
+    </div>
+
+    <div class="ai-option" onclick="alert('Admin Logs Coming Soon')">
+        📜 Admin Logs
+    </div>
+
+    <div class="close" onclick="closeAdminPanel()">Close</div>
+</div>
+</body>
+</html>

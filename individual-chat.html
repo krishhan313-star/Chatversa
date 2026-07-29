@@ -6,259 +6,263 @@
 <title>Individual Chat - Chatversa</title>
 
 <style>
-
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
 }
 
 body{
-background:#0f172a;
-color:white;
+  background:#0f172a;
+  color:white;
 }
 
 .header{
-background:#1e293b;
-padding:16px;
-text-align:center;
-font-size:22px;
-font-weight:bold;
+  background:#1e293b;
+  padding:18px;
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
+  box-shadow:0 5px 15px rgba(0,0,0,.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .container{
-padding:20px;
+  padding:20px;
 }
 
-input{
-width:100%;
-padding:14px;
-border:none;
-border-radius:12px;
-background:#1e293b;
-color:white;
-font-size:16px;
-margin-bottom:20px;
-outline:none;
+.search-box{
+  width:100%;
+  padding:14px 18px;
+  border:none;
+  border-radius:12px;
+  background:#1e293b;
+  color:white;
+  font-size:16px;
+  margin-bottom:20px;
+  outline:none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
 .user-card{
-background:#1e293b;
-padding:15px;
-border-radius:14px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:12px;
+  background:#1e293b;
+  padding:16px 20px;
+  border-radius:14px;
+  margin-bottom:12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow:0 4px 12px rgba(0,0,0,.2);
 }
 
 .user-name{
-font-size:17px;
-font-weight:bold;
+  font-size:17px;
+  font-weight:600;
+  color: #e2e8f0;
 }
 
-button{
-background:#4f46e5;
-color:white;
-border:none;
-padding:10px 16px;
-border-radius:10px;
-cursor:pointer;
+.chat-btn{
+  background:#4f46e5;
+  border:none;
+  padding:10px 22px;
+  border-radius:10px;
+  color:white;
+  font-weight:bold;
+  font-size:15px;
+  cursor:pointer;
+  transition: 0.2s ease;
+}
+
+.chat-btn:hover{
+  background:#4338ca;
 }
 
 .back-btn{
-width:100%;
-margin-top:20px;
-padding:14px;
-font-size:16px;
+  width:100%;
+  margin-top:20px;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:#4f46e5;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
+.no-data{
+  text-align: center;
+  color: #94a3b8;
+  padding: 20px;
+}
 </style>
 </head>
 
 <body>
 
 <div class="header">
-👤 Individual Chat
+  👤 Individual Chat
 </div>
 
 <div class="container">
 
- <input
-type="text"
-id="searchUser"
-placeholder="🔍 Search Username...">
+  <!-- Search Input -->
+  <input 
+    type="text" 
+    id="searchUser" 
+    class="search-box" 
+    placeholder="🔍 Search Username...">
 
-<div id="userList">
+  <!-- Users List Container -->
+  <div id="usersList">
+    <div class="no-data">Loading users...</div>
+  </div>
 
-<div class="user-card">
-<div class="user-name">
-No Users Found
-</div>
-
-<button disabled>
-Chat
-</button>
-
-</div>
-
-</div>
-
-<button
-class="back-btn"
-onclick="location.href='chat.html'">
-🏠 Back
-</button>
+  <!-- Back Button -->
+  <button class="back-btn" onclick="location.href='chat.html'">
+    🏠 Back
+  </button>
 
 </div>
- <script type="module">
 
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import {
-  getAuth,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
- import {
   getFirestore,
   collection,
   getDocs,
-  addDoc,
-  serverTimestamp
+  doc,
+  getDoc,
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const firebaseConfig = {
-
   apiKey: "AIzaSyDe3ahkE9wEpUOYwt8dnUiFhUAYI1X3i7E",
   authDomain: "chatversa-ca526.firebaseapp.com",
   projectId: "chatversa-ca526",
   storageBucket: "chatversa-ca526.firebasestorage.app",
   messagingSenderId: "735371121479",
   appId: "1:735371121479:web:230385acffc8a7c3e8f262"
-
 };
 
 const app = initializeApp(firebaseConfig);
-
 const auth = getAuth(app);
-
 const db = getFirestore(app);
 
+const usersListContainer = document.getElementById("usersList");
+const searchInput = document.getElementById("searchUser");
+
 let currentUser = null;
+let friendList = []; // Stores only accepted friends
 
-const userList = document.getElementById("userList");
-onAuthStateChanged(auth, async (user) => {
-
+onAuthStateChanged(auth, (user) => {
     if (!user) {
         location.href = "index.html";
         return;
     }
-
     currentUser = user;
-
-    loadUsers();
-
+    loadAcceptedFriends();
 });
 
-async function loadUsers(search = "") {
+// Sirf Accepted Friends fetch karne ka function
+async function loadAcceptedFriends() {
+    try {
+        // Query 1: When Current User is Receiver & status is Accepted
+        const q1 = query(
+            collection(db, "requests"),
+            where("receiverId", "==", currentUser.uid),
+            where("status", "==", "accepted")
+        );
 
-    userList.innerHTML = "";
+        // Query 2: When Current User is Sender & status is Accepted
+        const q2 = query(
+            collection(db, "requests"),
+            where("senderId", "==", currentUser.uid),
+            where("status", "==", "accepted")
+        );
 
-    const snapshot = await getDocs(collection(db, "users"));
+        const [snap1, snap2] = await Promise.all([getDocs(q1), getDocs(q2)]);
 
-    let found = false;
+        let friendUserIds = new Set();
 
-    snapshot.forEach((docSnap) => {
+        snap1.forEach(docSnap => friendUserIds.add(docSnap.data().senderId));
+        snap2.forEach(docSnap => friendUserIds.add(docSnap.data().receiverId));
 
-        if (docSnap.id === currentUser.uid) return;
-
-        const data = docSnap.data();
-
-         const username = data.username || (data.email ? data.email.split("@")[0] : "Unknown User");
-
-        if (username.toLowerCase().includes(search.toLowerCase())) {
-
-            found = true;
-
-            userList.innerHTML += `
-                <div class="user-card">
-
-                    <div class="user-name">
-                        ${username}
-                    </div>
-
-                    <button onclick="sendRequest('${docSnap.id}')">
-    Send Request
-</button>
-
-                </div>
-            `;
+        if (friendUserIds.size === 0) {
+            usersListContainer.innerHTML = `<div class="no-data">No accepted friends found. Accept requests first to start chatting!</div>`;
+            return;
         }
 
-    });
+        friendList = [];
 
-    if (!found) {
+        for (const userId of friendUserIds) {
+            const userRef = doc(db, "users", userId);
+            const userSnap = await getDoc(userRef);
 
-        userList.innerHTML = `
+            if (userSnap.exists()) {
+                const data = userSnap.data();
+                const username = data.username || (data.email ? data.email.split("@")[0] : "Unknown User");
+                
+                friendList.push({
+                    uid: userId,
+                    username: username
+                });
+            }
+        }
+
+        renderUsers(friendList);
+
+    } catch (error) {
+        console.error("Error loading friends:", error);
+        usersListContainer.innerHTML = `<div class="no-data">Failed to load users.</div>`;
+    }
+}
+
+// UI Render Function
+function renderUsers(list) {
+    usersListContainer.innerHTML = "";
+
+    if (list.length === 0) {
+        usersListContainer.innerHTML = `<div class="no-data">No accepted user found with this name.</div>`;
+        return;
+    }
+
+    list.forEach(user => {
+        usersListContainer.innerHTML += `
             <div class="user-card">
-                <div class="user-name">No Users Found</div>
+                <div class="user-name">👤 ${user.username}</div>
+                <button class="chat-btn" onclick="openChat('${user.uid}', '${user.username}')">Chat</button>
             </div>
         `;
-
-    }
-
+    });
 }
-document.getElementById("searchUser").addEventListener("input", (e) => {
-    loadUsers(e.target.value);
+
+// Search Filter Input (Filtering ONLY inside accepted friendList)
+searchInput.addEventListener("input", (e) => {
+    const searchTerm = e.target.value.toLowerCase().trim();
+    const filtered = friendList.filter(user => user.username.toLowerCase().includes(searchTerm));
+    renderUsers(filtered);
 });
 
- window.sendRequest = async function(receiverId){
+// Redirect to Chat Room
+window.openChat = function(friendUid, friendName) {
+    const roomId = currentUser.uid < friendUid 
+        ? `${currentUser.uid}_${friendUid}` 
+        : `${friendUid}_${currentUser.uid}`;
 
-    try{
-  const oldRequests = await getDocs(collection(db,"requests"));
-
-let alreadySent = false;
-
-oldRequests.forEach(docSnap => {
-
-    const req = docSnap.data();
-
-    if(
-        req.senderId === currentUser.uid &&
-        req.receiverId === receiverId &&
-        req.status === "pending"
-    ){
-        alreadySent = true;
-    }
-
-});
-
-if(alreadySent){
-    alert("Request already sent.");
-    return;
-}
-        await addDoc(collection(db,"requests"),{
-
-            senderId: currentUser.uid,
-            receiverId: receiverId,
-            status: "pending",
-            createdAt: serverTimestamp()
-
-        });
-
-        alert("✅ Chat request sent successfully!");
-
-    }catch(error){
-
-        console.error(error);
-        alert("❌ Failed to send request.");
-
-    }
-
+    location.href = `chat-room.html?roomId=${roomId}&name=${encodeURIComponent(friendName)}&userId=${friendUid}`;
 };
-
 </script>
+
 </body>
 </html>

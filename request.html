@@ -6,124 +6,136 @@
 <title>Request Section - Chatversa</title>
 
 <style>
-
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
 }
 
 body{
-background:#0f172a;
-color:white;
+  background:#0f172a;
+  color:white;
 }
 
 .header{
-background:#1e293b;
-padding:18px;
-text-align:center;
-font-size:24px;
-font-weight:bold;
-box-shadow:0 5px 15px rgba(0,0,0,.35);
+  background:#1e293b;
+  padding:18px;
+  text-align:center;
+  font-size:24px;
+  font-weight:bold;
+  box-shadow:0 5px 15px rgba(0,0,0,.35);
 }
 
 .container{
-padding:20px;
+  padding:20px;
 }
 
 .request-card{
-background:#1e293b;
-padding:18px;
-border-radius:16px;
-margin-bottom:15px;
-box-shadow:0 5px 15px rgba(0,0,0,.25);
+  background:#1e293b;
+  padding:18px;
+  border-radius:16px;
+  margin-bottom:15px;
+  box-shadow:0 5px 15px rgba(0,0,0,.25);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .user-name{
-font-size:18px;
-font-weight:bold;
-margin-bottom:10px;
+  font-size:18px;
+  font-weight:bold;
 }
 
 .status{
-color:#94a3b8;
-font-size:14px;
-margin-bottom:15px;
+  color:#94a3b8;
+  font-size:14px;
+  margin-bottom:10px;
 }
 
 .btn-row{
-display:flex;
-gap:10px;
+  display:flex;
+  gap:10px;
 }
 
-.accept-btn{
-flex:1;
-background:#16a34a;
-border:none;
-padding:12px;
-border-radius:10px;
-color:white;
-font-weight:bold;
-cursor:pointer;
+.accept-btn, .send-btn{
+  flex:1;
+  background:#16a34a;
+  border:none;
+  padding:12px;
+  border-radius:10px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
 }
 
 .reject-btn{
-flex:1;
-background:#dc2626;
-border:none;
-padding:12px;
-border-radius:10px;
-color:white;
-font-weight:bold;
-cursor:pointer;
+  flex:1;
+  background:#dc2626;
+  border:none;
+  padding:12px;
+  border-radius:10px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.disabled-btn{
+  flex:1;
+  background:#475569;
+  border:none;
+  padding:12px;
+  border-radius:10px;
+  color:#cbd5e1;
+  font-weight:bold;
+  cursor:not-allowed;
 }
 
 .back-btn{
-width:100%;
-margin-top:20px;
-padding:14px;
-border:none;
-border-radius:12px;
-background:#4f46e5;
-color:white;
-font-size:16px;
-font-weight:bold;
-cursor:pointer;
+  width:100%;
+  margin-top:20px;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:#4f46e5;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
 }
+
 .tabs{
-display:flex;
-gap:10px;
-margin-bottom:20px;
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
 }
 
 .tab-btn{
-flex:1;
-padding:12px;
-border:none;
-border-radius:10px;
-background:#334155;
-color:white;
-font-weight:bold;
-cursor:pointer;
+  flex:1;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#334155;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
 }
 
 .active{
-background:#4f46e5;
+  background:#4f46e5;
 }
 
 input{
-width:100%;
-padding:14px;
-border:none;
-border-radius:10px;
-background:#1e293b;
-color:white;
-margin-bottom:15px;
-outline:none;
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:10px;
+  background:#1e293b;
+  color:white;
+  margin-bottom:15px;
+  outline:none;
 }
 </style>
-
 </head>
 
 <body>
@@ -134,80 +146,37 @@ outline:none;
 
 <div class="container">
 
-<!-- Tabs -->
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('search')">🔍 Search</button>
+    <button class="tab-btn" onclick="showTab('received')">📥 Received</button>
+    <button class="tab-btn" onclick="showTab('sent')">📤 Sent</button>
+  </div>
 
-<div class="tabs">
+  <!-- Search Tab -->
+  <div id="searchTab">
+    <input type="text" id="searchNewUser" placeholder="🔍 Search New Users...">
+    <div id="searchResults"></div>
+  </div>
 
-<button class="tab-btn active" onclick="showTab('search')">
-🔍 Search
-</button>
+  <!-- Received Tab -->
+  <div id="receivedTab" style="display:none;">
+    <div id="requestList"></div>
+  </div>
 
-<button class="tab-btn" onclick="showTab('received')">
-📥 Received
-</button>
+  <!-- Sent Tab -->
+  <div id="sentTab" style="display:none;">
+    <div id="sentRequestList"></div>
+  </div>
 
-<button class="tab-btn" onclick="showTab('sent')">
-📤 Sent
-</button>
-
-</div>
-
-<!-- Search -->
-
-<div id="searchTab">
-
-<input
-type="text"
-id="searchUser"
-placeholder="Search username...">
-
-<div id="searchList">
+  <button class="back-btn" onclick="location.href='chat.html'">🏠 Back</button>
 
 </div>
 
-</div>
-
-<!-- Received -->
-
-<div id="receivedTab" style="display:none;">
-
-<div id="requestList">
-
-</div>
-
-</div>
-
-<!-- Sent -->
-
-<div id="sentTab" style="display:none;">
-
-<div id="sentRequestList">
-
-</div>
-
-</div>
-
-<button
-class="back-btn"
-onclick="location.href='chat.html'">
-
-🏠 Back
-
-</button>
-
-</div>
-
-</div>
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import {
-  getAuth,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
- import {
   getFirestore,
   collection,
   getDocs,
@@ -215,18 +184,19 @@ import {
   getDoc,
   updateDoc,
   setDoc,
+  addDoc,
+  query,
+  where,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const firebaseConfig = {
-
   apiKey: "AIzaSyDe3ahkE9wEpUOYwt8dnUiFhUAYI1X3i7E",
   authDomain: "chatversa-ca526.firebaseapp.com",
   projectId: "chatversa-ca526",
   storageBucket: "chatversa-ca526.firebasestorage.app",
   messagingSenderId: "735371121479",
   appId: "1:735371121479:web:230385acffc8a7c3e8f262"
-
 };
 
 const app = initializeApp(firebaseConfig);
@@ -234,189 +204,226 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 const requestList = document.getElementById("requestList");
+const sentRequestList = document.getElementById("sentRequestList");
+const searchResults = document.getElementById("searchResults");
+const searchInput = document.getElementById("searchNewUser");
 
 let currentUser = null;
 
 onAuthStateChanged(auth, (user) => {
-
     if (!user) {
         location.href = "index.html";
         return;
     }
-
     currentUser = user;
-
     loadRequests();
-
+    loadSentRequests();
 });
 
-async function loadRequests(){
+// Single Event Listener Attach karein taaki multiple calls na hon
+searchInput.addEventListener("input", (e) => {
+    searchNewUsers(e.target.value);
+});
+
+// 1. Search Users Function
+async function searchNewUsers(search = "") {
+    // Purana search clear karein
+    searchResults.innerHTML = "";
+
+    if (!search.trim()) return;
+
+    const usersSnap = await getDocs(collection(db, "users"));
+    const requestsSnap = await getDocs(collection(db, "requests"));
+
+    let existingRequests = [];
+    requestsSnap.forEach(docSnap => {
+        existingRequests.push({ id: docSnap.id, ...docSnap.data() });
+    });
+
+    usersSnap.forEach((userDoc) => {
+        if (userDoc.id === currentUser.uid) return;
+
+        const data = userDoc.data();
+        const username = data.username || (data.email ? data.email.split("@")[0] : "Unknown User");
+
+        if (!username.toLowerCase().includes(search.toLowerCase())) return;
+
+        // Check relationship status
+        const reqSent = existingRequests.find(r => r.senderId === currentUser.uid && r.receiverId === userDoc.id);
+        const reqReceived = existingRequests.find(r => r.receiverId === currentUser.uid && r.senderId === userDoc.id);
+
+        let actionBtn = "";
+
+        if (reqSent && reqSent.status === "pending") {
+            actionBtn = `<button class="disabled-btn" disabled>⏳ Pending</button>`;
+        } else if ((reqSent && reqSent.status === "accepted") || (reqReceived && reqReceived.status === "accepted")) {
+            actionBtn = `<button class="disabled-btn" disabled>👥 Friends</button>`;
+        } else {
+            actionBtn = `<button class="send-btn" onclick="sendRequest('${userDoc.id}')">➕ Send Request</button>`;
+        }
+
+        searchResults.innerHTML += `
+            <div class="request-card">
+                <div class="user-name">👤 ${username}</div>
+                <div class="btn-row">${actionBtn}</div>
+            </div>
+        `;
+    });
+}
+
+// 2. Load Received Requests
+async function loadRequests() {
+    requestList.innerHTML = "Loading...";
+
+    const q = query(
+        collection(db, "requests"),
+        where("receiverId", "==", currentUser.uid),
+        where("status", "==", "pending")
+    );
+
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+        requestList.innerHTML = `
+            <div class="request-card">
+                <div class="user-name">No Requests</div>
+                <div class="status">You don't have any pending requests.</div>
+            </div>`;
+        return;
+    }
 
     requestList.innerHTML = "";
 
-    const snapshot = await getDocs(collection(db,"requests"));
-
-    let found = false;
-        snapshot.forEach(async (requestDoc)=>{
-
+    for (const requestDoc of snapshot.docs) {
         const request = requestDoc.data();
+        const senderRef = doc(db, "users", request.senderId);
+        const senderSnap = await getDoc(senderRef);
 
-         if(
-    request.receiverId !== currentUser.uid ||
-    request.status !== "pending"
-) return;
+        let senderName = "Unknown User";
+        if (senderSnap.exists()) {
+            const senderData = senderSnap.data();
+            senderName = senderData.username || senderData.email.split("@")[0];
+        }
 
-        found = true;
-
-          const senderRef = doc(db, "users", request.senderId);
-const senderSnap = await getDoc(senderRef);
-
-let senderName = "Unknown User";
-
-if (senderSnap.exists()) {
-    const senderData = senderSnap.data();
-    senderName = senderData.username || senderData.email.split("@")[0];
-}
         requestList.innerHTML += `
+            <div class="request-card">
+                <div class="user-name">👤 ${senderName}</div>
+                <div class="status">Wants to chat with you.</div>
+                <div class="btn-row">
+                    <button class="accept-btn" onclick="acceptRequest('${requestDoc.id}')">✅ Accept</button>
+                    <button class="reject-btn" onclick="rejectRequest('${requestDoc.id}')">❌ Reject</button>
+                </div>
+            </div>`;
+    }
+}
 
-        <div class="request-card">
+// 3. Load Sent Requests
+async function loadSentRequests() {
+    sentRequestList.innerHTML = "Loading...";
 
-             <h2>👤 ${senderName}</h2>
+    const q = query(
+        collection(db, "requests"),
+        where("senderId", "==", currentUser.uid)
+    );
 
-            <div class="status">
-                Wants to chat with you.
-            </div>
+    const snapshot = await getDocs(q);
 
-            <div class="btn-row">
-
-                <button
-                class="accept-btn"
-                onclick="acceptRequest('${requestDoc.id}')">
-                ✅ Accept
-                </button>
-
-                <button
-                class="reject-btn"
-                onclick="rejectRequest('${requestDoc.id}')">
-                ❌ Reject
-                </button>
-
-            </div>
-
-        </div>
-
-        `;
-
-    });
-
-    if(!found){
-
-        requestList.innerHTML = `
-
-        <div class="request-card">
-
-            <div class="user-name">
-                No Requests
-            </div>
-
-            <div class="status">
-                You don't have any pending requests.
-            </div>
-
-        </div>
-
-        `;
-
+    if (snapshot.empty) {
+        sentRequestList.innerHTML = `
+            <div class="request-card">
+                <div class="user-name">No Sent Requests</div>
+                <div class="status">You haven't sent any requests.</div>
+            </div>`;
+        return;
     }
 
+    sentRequestList.innerHTML = "";
+
+    for (const requestDoc of snapshot.docs) {
+        const request = requestDoc.data();
+        const receiverRef = doc(db, "users", request.receiverId);
+        const receiverSnap = await getDoc(receiverRef);
+
+        let receiverName = "Unknown User";
+        if (receiverSnap.exists()) {
+            const receiverData = receiverSnap.data();
+            receiverName = receiverData.username || receiverData.email.split("@")[0];
+        }
+
+        sentRequestList.innerHTML += `
+            <div class="request-card">
+                <div class="user-name">👤 ${receiverName}</div>
+                <div class="status">Status: <b>${request.status.toUpperCase()}</b></div>
+            </div>`;
+    }
 }
 
- window.acceptRequest = async function(requestId){
+// Global Window Functions
+window.sendRequest = async function(receiverId) {
+    await addDoc(collection(db, "requests"), {
+        senderId: currentUser.uid,
+        receiverId: receiverId,
+        status: "pending",
+        createdAt: serverTimestamp()
+    });
+    alert("🚀 Request Sent!");
+    searchNewUsers(searchInput.value);
+    loadSentRequests();
+};
 
-    // Request Document
+window.acceptRequest = async function(requestId) {
     const requestRef = doc(db, "requests", requestId);
     const requestSnap = await getDoc(requestRef);
 
-    if(!requestSnap.exists()){
+    if (!requestSnap.exists()) {
         alert("Request not found!");
         return;
     }
 
     const request = requestSnap.data();
 
-    // Request Accept
-    await updateDoc(requestRef,{
-        status:"accepted"
-    });
+    await updateDoc(requestRef, { status: "accepted" });
 
-    // Unique Chat Room ID
-    const roomId =
-        request.senderId < request.receiverId
+    const roomId = request.senderId < request.receiverId
         ? request.senderId + "_" + request.receiverId
         : request.receiverId + "_" + request.senderId;
 
-    // Chat Room Create
-    await setDoc(doc(db,"chatRooms",roomId),{
-
-        members:[
-            request.senderId,
-            request.receiverId
-        ],
-
+    await setDoc(doc(db, "chatRooms", roomId), {
+        members: [request.senderId, request.receiverId],
         createdAt: serverTimestamp(),
-
-        lastMessage:"",
-        lastMessageTime:null
-
-    },{merge:true});
+        lastMessage: "",
+        lastMessageTime: null
+    }, { merge: true });
 
     alert("✅ Request Accepted");
-
     loadRequests();
-
 };
 
-window.rejectRequest = async function(id){
-
-    await updateDoc(doc(db,"requests",id),{
-
-        status:"rejected"
-
-    });
-
+window.rejectRequest = async function(id) {
+    await updateDoc(doc(db, "requests", id), { status: "rejected" });
     alert("❌ Request Rejected");
-
     loadRequests();
+};
 
-}
-window.showTab = function(tab){
-
-    // Sab hide
+window.showTab = function(tab) {
     document.getElementById("searchTab").style.display = "none";
     document.getElementById("receivedTab").style.display = "none";
     document.getElementById("sentTab").style.display = "none";
 
-    // Active button remove
-    document.querySelectorAll(".tab-btn").forEach(btn=>{
-        btn.classList.remove("active");
-    });
+    document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
 
-    // Selected tab show
-    if(tab==="search"){
-        document.getElementById("searchTab").style.display="block";
+    if (tab === "search") {
+        document.getElementById("searchTab").style.display = "block";
         document.querySelectorAll(".tab-btn")[0].classList.add("active");
-    }
-
-    if(tab==="received"){
-        document.getElementById("receivedTab").style.display="block";
+    } else if (tab === "received") {
+        document.getElementById("receivedTab").style.display = "block";
         document.querySelectorAll(".tab-btn")[1].classList.add("active");
-    }
-
-    if(tab==="sent"){
-        document.getElementById("sentTab").style.display="block";
+        loadRequests();
+    } else if (tab === "sent") {
+        document.getElementById("sentTab").style.display = "block";
         document.querySelectorAll(".tab-btn")[2].classList.add("active");
+        loadSentRequests();
     }
-
 };
 </script>
 

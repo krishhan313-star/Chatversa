@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Room - Chatversa</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#0f172a;
+  color:white;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+.header{
+  background:#1e293b;
+  padding:12px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  box-shadow:0 4px 12px rgba(0,0,0,.35);
+  z-index:10;
+}
+
+.user-info{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.back-icon{
+  font-size:22px;
+  cursor:pointer;
+  text-decoration:none;
+  color:white;
+  font-weight:bold;
+}
+
+.profile-pic {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #334155;
+  border: 1.5px solid #4f46e5;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-title{
+  font-size:16px;
+  font-weight:bold;
+}
+
+.status-text{
+  font-size:12px;
+  color:#94a3b8;
+}
+
+.status-online{
+  color:#22c55e;
+}
+
+.call-actions{
+  display:flex;
+  gap:10px;
+}
+
+.call-btn{
+  background:#334155;
+  border:none;
+  color:white;
+  padding:8px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:16px;
+  transition:0.2s;
+}
+
+.call-btn:hover{
+  background:#4f46e5;
+}
+
+.chat-box{
+  flex:1;
+  padding:20px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.message{
+  max-width:75%;
+  padding:12px 16px;
+  border-radius:16px;
+  font-size:15px;
+  line-height:1.4;
+  word-wrap:break-word;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.my-msg{
+  align-self:flex-end;
+  background:#4f46e5;
+  color:white;
+  border-bottom-right-radius:2px;
+}
+
+.other-msg{
+  align-self:flex-start;
+  background:#1e293b;
+  color:#e2e8f0;
+  border-bottom-left-radius:2px;
+}
+
+.input-container{
+  background:#1e293b;
+  padding:12px 16px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.25);
+}
+
+.message-input{
+  flex:1;
+  padding:14px 18px;
+  border:none;
+  border-radius:12px;
+  background:#0f172a;
+  color:white;
+  font-size:15px;
+  outline:none;
+}
+
+.send-btn{
+  background:#4f46e5;
+  color:white;
+  border:none;
+  padding:14px 22px;
+  border-radius:12px;
+  font-weight:bold;
+  font-size:15px;
+  cursor:pointer;
+}
+
+/* Call Modal Overlay */
+.call-modal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(15, 23, 42, 0.95);
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
+  gap:20px;
+}
+
+.video-grid{
+  display:flex;
+  gap:10px;
+  width:90%;
+  max-width:600px;
+  justify-content:center;
+}
+
+video{
+  width:45%;
+  border-radius:12px;
+  background:#1e293b;
+  max-height: 300px;
+}
+
+.modal-btn-group{
+  display:flex;
+  gap:15px;
+}
+
+.end-call-btn{
+  background:#ef4444;
+  color:white;
+  border:none;
+  padding:12px 24px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.accept-call-btn{
+  background:#22c55e;
+  color:white;
+  border:none;
+  padding:12px 24px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="user-info">
+    <a href="javascript:history.back()" class="back-icon">←</a>
+    <img id="userAvatar" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=4f46e5&color=fff" alt="Profile">
+    <div class="user-details">
+      <div class="user-title" id="chatUserName">Loading...</div>
+      <div class="status-text" id="userStatus">Offline</div>
+    </div>
+  </div>
+  <div class="call-actions">
+    <button class="call-btn" id="audioCallBtn">📞</button>
+    <button class="call-btn" id="videoCallBtn">📹</button>
+  </div>
+</div>
+
+<!-- Chat Messages Area -->
+<div class="chat-box" id="chatBox"></div>
+
+<!-- Input Form Section -->
+<form id="messageForm" class="input-container">
+  <input type="text" id="messageInput" class="message-input" placeholder="Type a message..." autocomplete="off" required>
+  <button type="submit" id="sendBtn" class="send-btn">Send</button>
+</form>
+
+<!-- Call Overlay Modal -->
+<div class="call-modal" id="callModal">
+  <h2 id="callModalTitle">Calling...</h2>
+  <div class="video-grid">
+    <video id="localVideo" autoplay playsinline muted></video>
+    <video id="remoteVideo" autoplay playsinline></video>
+  </div>
+  <div class="modal-btn-group">
+    <button class="accept-call-btn" id="acceptCallBtn" style="display:none;">Answer</button>
+    <button class="end-call-btn" id="endCallBtn">End Call</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  doc,
+  addDoc,
+  query,
+  orderBy,
+  onSnapshot,
+  updateDoc,
+  setDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDe3ahkE9wEpUOYwt8dnUiFhUAYI1X3i7E",
+  authDomain: "chatversa-ca526.firebaseapp.com",
+  projectId: "chatversa-ca526",
+  storageBucket: "chatversa-ca526.firebasestorage.app",
+  messagingSenderId: "735371121479",
+  appId: "1:735371121479:web:230385acffc8a7c3e8f262"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const chatUserName = document.getElementById("chatUserName");
+const userAvatar = document.getElementById("userAvatar");
+const userStatus = document.getElementById("userStatus");
+const chatBox = document.getElementById("chatBox");
+const messageForm = document.getElementById("messageForm");
+const messageInput = document.getElementById("messageInput");
+
+const callModal = document.getElementById("callModal");
+const callModalTitle = document.getElementById("callModalTitle");
+const localVideo = document.getElementById("localVideo");
+const remoteVideo = document.getElementById("remoteVideo");
+const endCallBtn = document.getElementById("endCallBtn");
+const acceptCallBtn = document.getElementById("acceptCallBtn");
+
+const urlParams = new URLSearchParams(window.location.search);
+const roomId = urlParams.get("roomId");
+let friendName = urlParams.get("name");
+let targetUid = urlParams.get("userId");
+
+let currentUser = null;
+let peerConnection = null;
+let localStream = null;
+
+const rtcConfig = {
+  iceServers: [
+    { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:stun1.l.google.com:19302" }
+  ]
+};
+
+onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+        location.href = "index.html";
+        return;
+    }
+    currentUser = user;
+
+    if (!targetUid && roomId) {
+        const uids = roomId.split("_");
+        targetUid = uids.find(id => id !== currentUser.uid);
+    }
+
+    setupUserPresence();
+    resolveUserAndPresence();
+    listenForMessages();
+    listenForIncomingCalls();
+});
+
+// Presence System
+function setupUserPresence() {
+    const userRef = doc(db, "users", currentUser.uid);
+    updateDoc(userRef, { isOnline: true, lastSeen: serverTimestamp() }).catch(() => {});
+    window.addEventListener("beforeunload", () => {
+        updateDoc(userRef, { isOnline: false, lastSeen: serverTimestamp() });
+    });
+}
+
+function resolveUserAndPresence() {
+    if (friendName) {
+        chatUserName.innerText = friendName;
+        userAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(friendName)}&background=4f46e5&color=fff`;
+    }
+
+    if (targetUid) {
+        onSnapshot(doc(db, "users", targetUid), (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const name = data.username || friendName || "User";
+                chatUserName.innerText = name;
+                
+                if (data.photoURL || data.profilePic) {
+                    userAvatar.src = data.photoURL || data.profilePic;
+                } else {
+                    userAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=4f46e5&color=fff`;
+                }
+
+                if (data.isOnline) {
+                    userStatus.innerText = "Online";
+                    userStatus.className = "status-text status-online";
+                } else if (data.lastSeen) {
+                    const date = data.lastSeen.toDate ? data.lastSeen.toDate() : new Date();
+                    userStatus.innerText = `Last seen at ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                    userStatus.className = "status-text";
+                } else {
+                    userStatus.innerText = "Offline";
+                    userStatus.className = "status-text";
+                }
+            }
+        });
+    }
+}
+
+// Messages
+function listenForMessages() {
+    const q = query(
+        collection(db, "chatRooms", roomId, "messages"),
+        orderBy("timestamp", "asc")
+    );
+
+    onSnapshot(q, (snapshot) => {
+        chatBox.innerHTML = "";
+        snapshot.forEach((docSnap) => {
+            const msg = docSnap.data();
+            const isMe = msg.senderId === currentUser.uid;
+            const msgDiv = document.createElement("div");
+            msgDiv.classList.add("message", isMe ? "my-msg" : "other-msg");
+            msgDiv.innerText = msg.text || "";
+            chatBox.appendChild(msgDiv);
+        });
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+}
+
+messageForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const text = messageInput.value.trim();
+    if (!text) return;
+
+    messageInput.value = "";
+    await addDoc(collection(db, "chatRooms", roomId, "messages"), {
+        text: text,
+        senderId: currentUser.uid,
+        timestamp: serverTimestamp()
+    });
+});
+
+// Audio & Video Call Logic
+document.getElementById("audioCallBtn").onclick = () => startCall(false);
+document.getElementById("videoCallBtn").onclick = () => startCall(true);
+
+async function startCall(isVideo) {
+    try {
+        localStream = await navigator.mediaDevices.getUserMedia({
+            video: isVideo,
+            audio: true
+        });
+    } catch (err) {
+        console.warn("Camera/Mic initial access failed, trying audio fallback...", err);
+        try {
+            localStream = await navigator.mediaDevices.getUserMedia({
+                video: false,
+                audio: true
+            });
+            alert("Camera denied or unavailable. Starting Audio Call instead.");
+        } catch (audioErr) {
+            alert("Please allow Microphone/Camera permissions in your browser settings to make calls.");
+            console.error("Media Error:", audioErr);
+            return;
+        }
+    }
+
+    callModal.style.display = "flex";
+    callModalTitle.innerText = isVideo ? "Calling Video..." : "Calling Audio...";
+    acceptCallBtn.style.display = "none";
+
+    localVideo.srcObject = localStream;
+
+    peerConnection = new RTCPeerConnection(rtcConfig);
+    localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+    peerConnection.ontrack = (event) => {
+        remoteVideo.srcObject = event.streams[0];
+    };
+
+    const callDocRef = doc(db, "chatRooms", roomId, "calls", "currentCall");
+    const offerCandidatesRef = collection(callDocRef, "offerCandidates");
+    const answerCandidatesRef = collection(callDocRef, "answerCandidates");
+
+    peerConnection.onicecandidate = (event) => {
+        if (event.candidate) {
+            addDoc(offerCandidatesRef, event.candidate.toJSON());
+        }
+    };
+
+    const offer = await peerConnection.createOffer();
+    await peerConnection.setLocalDescription(offer);
+
+    await setDoc(callDocRef, {
+        offer: { type: offer.type, sdp: offer.sdp },
+        callerId: currentUser.uid,
+        type: isVideo ? "video" : "audio",
+        status: "calling"
+    });
+
+    onSnapshot(callDocRef, async (snapshot) => {
+        const data = snapshot.data();
+        if (data && data.answer && !peerConnection.currentRemoteDescription) {
+            const answer = new RTCSessionDescription(data.answer);
+            await peerConnection.setRemoteDescription(answer);
+            callModalTitle.innerText = "Connected";
+        }
+        if (!data || data.status === "ended") {
+            closeCallUI();
+        }
+    });
+
+    onSnapshot(answerCandidatesRef, (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+            if (change.type === "added") {
+                peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data()));
+            }
+        });
+    });
+}
+
+function listenForIncomingCalls() {
+    const callDocRef = doc(db, "chatRooms", roomId, "calls", "currentCall");
+
+    onSnapshot(callDocRef, async (snapshot) => {
+        if (!snapshot.exists()) return;
+        const data = snapshot.data();
+
+        if (data.callerId !== currentUser.uid && data.status === "calling") {
+            callModal.style.display = "flex";
+            callModalTitle.innerText = `Incoming ${data.type} Call...`;
+            acceptCallBtn.style.display = "inline-block";
+
+            acceptCallBtn.onclick = async () => {
+                acceptCallBtn.style.display = "none";
+                callModalTitle.innerText = "Connecting...";
+
+                try {
+                    localStream = await navigator.mediaDevices.getUserMedia({
+                        video: data.type === "video",
+                        audio: true
+                    });
+                } catch (err) {
+                    try {
+                        localStream = await navigator.mediaDevices.getUserMedia({
+                            video: false,
+                            audio: true
+                        });
+                    } catch (audioErr) {
+                        alert("Microphone permission required to answer.");
+                        return;
+                    }
+                }
+
+                localVideo.srcObject = localStream;
+
+                peerConnection = new RTCPeerConnection(rtcConfig);
+                localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+                peerConnection.ontrack = (event) => {
+                    remoteVideo.srcObject = event.streams[0];
+                };
+
+                const offerCandidatesRef = collection(callDocRef, "offerCandidates");
+                const answerCandidatesRef = collection(callDocRef, "answerCandidates");
+
+                peerConnection.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        addDoc(answerCandidatesRef, event.candidate.toJSON());
+                    }
+                };
+
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+                const answer = await peerConnection.createAnswer();
+                await peerConnection.setLocalDescription(answer);
+
+                await updateDoc(callDocRef, {
+                    answer: { type: answer.type, sdp: answer.sdp },
+                    status: "connected"
+                });
+
+                callModalTitle.innerText = "Connected";
+
+                onSnapshot(offerCandidatesRef, (snapshot) => {
+                    snapshot.docChanges().forEach((change) => {
+                        if (change.type === "added") {
+                            peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data()));
+                        }
+                    });
+                });
+            };
+        } else if (data.status === "ended") {
+            closeCallUI();
+        }
+    });
+}
+
+endCallBtn.onclick = async () => {
+    const callDocRef = doc(db, "chatRooms", roomId, "calls", "currentCall");
+    await setDoc(callDocRef, { status: "ended" }, { merge: true }).catch(() => {});
+    closeCallUI();
+};
+
+function closeCallUI() {
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+    }
+    if (peerConnection) {
+        peerConnection.close();
+    }
+    callModal.style.display = "none";
+}
+</script>
+
+</body>
+</html>

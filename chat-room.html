@@ -127,6 +127,16 @@ body{
   border-bottom-left-radius:4px;
 }
 
+.call-log-msg {
+  align-self: center !important;
+  background: #334155 !important;
+  color: #cbd5e1 !important;
+  font-size: 13px !important;
+  border-radius: 12px !important;
+  padding: 6px 14px !important;
+  text-align: center;
+}
+
 .input-container{
   background:#1e293b;
   padding:12px 16px;
@@ -172,7 +182,6 @@ body{
   padding:50px 20px 40px;
 }
 
-/* Background Blur Avatar Effect */
 .call-bg-blur {
   position: absolute;
   top: 0;
@@ -246,7 +255,7 @@ body{
   display: none;
 }
 
-/* Video Container Grid */
+/* Video Grid */
 .video-container {
   position: absolute;
   top: 0;
@@ -369,7 +378,7 @@ body{
     <div class="call-timer" id="callTimer">00:00</div>
   </div>
 
-  <!-- Instagram Style Toolbar -->
+  <!-- Toolbar -->
   <div class="call-controls">
     <button class="icon-btn" id="toggleMicBtn">🎙️</button>
     <button class="icon-btn btn-accept" id="acceptCallBtn" style="display:none;">📞</button>
@@ -443,6 +452,7 @@ let currentUser = null;
 let peerConnection = null;
 let localStream = null;
 let timerInterval = null;
+let callDurationSeconds = 0;
 let audioContext = null;
 let ringtoneOscillator = null;
 
@@ -526,7 +536,7 @@ function resolveUserAndPresence() {
     }
 }
 
-// Chat System
+// Chat System with Call Log UI
 function listenForMessages() {
     if (!roomId) return;
     const q = query(
@@ -540,7 +550,13 @@ function listenForMessages() {
             const msg = docSnap.data();
             const isMe = msg.senderId === currentUser.uid;
             const msgDiv = document.createElement("div");
-            msgDiv.classList.add("message", isMe ? "my-msg" : "other-msg");
+
+            if (msg.isCallLog) {
+                msgDiv.classList.add("message", "call-log-msg");
+            } else {
+                msgDiv.classList.add("message", isMe ? "my-msg" : "other-msg");
+            }
+
             msgDiv.innerText = msg.text || "";
             chatBox.appendChild(msgDiv);
         });
@@ -560,6 +576,28 @@ messageForm.addEventListener("submit", async (e) => {
         timestamp: serverTimestamp()
     });
 });
+
+// Send Call Summary Message to Chat
+async function sendCallLogMessage(callType, status, durationSec = 0) {
+    if (!roomId) return;
+
+    let text = "";
+    if (status === "connected") {
+        let mins = Math.floor(durationSec / 60);
+        let secs = durationSec % 60;
+        let timeStr = `${mins < 10 ? '0' + mins : mins}:${secs < 10 ? '0' + secs : secs}`;
+        text = `📞 ${callType === 'video' ? 'Video' : 'Audio'} Call ended • ${timeStr}`;
+    } else {
+        text = `🚫 Missed ${callType === 'video' ? 'Video' : 'Audio'} Call`;
+    }
+
+    await addDoc(collection(db, "chatRooms", roomId, "messages"), {
+        text: text,
+        senderId: currentUser.uid,
+        isCallLog: true,
+        timestamp: serverTimestamp()
+    });
+}
 
 // Sound Generator (Procedural Ringtone)
 function playRingtone() {
@@ -586,18 +624,19 @@ function stopRingtone() {
 
 // Timer Counter
 function startTimer() {
-    let seconds = 0;
+    callDurationSeconds = 0;
     callTimer.style.display = "block";
     pulseRing.style.display = "none";
+    
     timerInterval = setInterval(() => {
-        seconds++;
-        let mins = Math.floor(seconds / 60);
-        let secs = seconds % 60;
+        callDurationSeconds++;
+        let mins = Math.floor(callDurationSeconds / 60);
+        let secs = callDurationSeconds % 60;
         callTimer.innerText = `${mins < 10 ? '0' + mins : mins}:${secs < 10 ? '0' + secs : secs}`;
     }, 1000);
 }
 
-// Call Logic
+// Call Actions
 document.getElementById("audioCallBtn").onclick = () => startCall(false);
 document.getElementById("videoCallBtn").onclick = () => startCall(true);
 
@@ -754,7 +793,7 @@ function listenForIncomingCalls() {
     });
 }
 
-// Controls Logic
+// Control Buttons Logic
 toggleMicBtn.onclick = () => {
     if (localStream) {
         const audioTrack = localStream.getAudioTracks()[0];
@@ -779,6 +818,15 @@ toggleCamBtn.onclick = () => {
 endCallBtn.onclick = async () => {
     if (roomId) {
         const callDocRef = doc(db, "chatRooms", roomId, "calls", "currentCall");
+        
+        // Push Call duration log to chat box
+        const isVideo = toggleCamBtn.style.display !== "none";
+        if (callStatusLabel.innerText === "Connected") {
+            await sendCallLogMessage(isVideo ? "video" : "audio", "connected", callDurationSeconds);
+        } else {
+            await sendCallLogMessage(isVideo ? "video" : "audio", "missed");
+        }
+
         await setDoc(callDocRef, { status: "ended" }, { merge: true }).catch(() => {});
     }
     closeCallUI();

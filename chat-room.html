@@ -10,7 +10,7 @@
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family:Arial,sans-serif;
+  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 body{
@@ -19,8 +19,10 @@ body{
   height:100vh;
   display:flex;
   flex-direction:column;
+  overflow:hidden;
 }
 
+/* Header */
 .header{
   background:#1e293b;
   padding:12px 16px;
@@ -51,7 +53,7 @@ body{
   border-radius: 50%;
   object-fit: cover;
   background: #334155;
-  border: 1.5px solid #4f46e5;
+  border: 1.5px solid #6366f1;
 }
 
 .user-details {
@@ -75,24 +77,24 @@ body{
 
 .call-actions{
   display:flex;
-  gap:10px;
+  gap:12px;
 }
 
 .call-btn{
-  background:#334155;
+  background:transparent;
   border:none;
   color:white;
-  padding:8px 12px;
-  border-radius:10px;
   cursor:pointer;
-  font-size:16px;
+  font-size:20px;
+  padding:6px;
   transition:0.2s;
 }
 
 .call-btn:hover{
-  background:#4f46e5;
+  opacity:0.8;
 }
 
+/* Chat Messages */
 .chat-box{
   flex:1;
   padding:20px;
@@ -105,25 +107,24 @@ body{
 .message{
   max-width:75%;
   padding:12px 16px;
-  border-radius:16px;
+  border-radius:18px;
   font-size:15px;
   line-height:1.4;
   word-wrap:break-word;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
 .my-msg{
   align-self:flex-end;
-  background:#4f46e5;
+  background:#6366f1;
   color:white;
-  border-bottom-right-radius:2px;
+  border-bottom-right-radius:4px;
 }
 
 .other-msg{
   align-self:flex-start;
   background:#1e293b;
   color:#e2e8f0;
-  border-bottom-left-radius:2px;
+  border-bottom-left-radius:4px;
 }
 
 .input-container{
@@ -132,14 +133,13 @@ body{
   display:flex;
   gap:10px;
   align-items:center;
-  box-shadow: 0 -4px 12px rgba(0,0,0,0.25);
 }
 
 .message-input{
   flex:1;
-  padding:14px 18px;
+  padding:12px 18px;
   border:none;
-  border-radius:12px;
+  border-radius:24px;
   background:#0f172a;
   color:white;
   font-size:15px;
@@ -147,70 +147,176 @@ body{
 }
 
 .send-btn{
-  background:#4f46e5;
+  background:#6366f1;
   color:white;
   border:none;
-  padding:14px 22px;
-  border-radius:12px;
+  padding:12px 20px;
+  border-radius:24px;
   font-weight:bold;
-  font-size:15px;
   cursor:pointer;
 }
 
-/* Call Modal Overlay */
+/* INSTAGRAM STYLE CALL MODAL OVERLAY */
 .call-modal{
   position:fixed;
   top:0;
   left:0;
-  width:100%;
-  height:100%;
-  background:rgba(15, 23, 42, 0.95);
+  width:100vw;
+  height:100vh;
+  background:#0a0a0c;
   display:none;
   flex-direction:column;
   align-items:center;
-  justify-content:center;
-  z-index:100;
-  gap:20px;
+  justify-content:space-between;
+  z-index:9999;
+  padding:50px 20px 40px;
 }
 
-.video-grid{
-  display:flex;
-  gap:10px;
-  width:90%;
-  max-width:600px;
-  justify-content:center;
+/* Background Blur Avatar Effect */
+.call-bg-blur {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(40px) brightness(0.3);
+  z-index: 1;
 }
 
-video{
-  width:45%;
-  border-radius:12px;
-  background:#1e293b;
-  max-height: 300px;
+.call-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
-.modal-btn-group{
-  display:flex;
-  gap:15px;
+.call-avatar-wrapper {
+  position: relative;
+  margin-top: 30px;
 }
 
-.end-call-btn{
-  background:#ef4444;
-  color:white;
-  border:none;
-  padding:12px 24px;
-  border-radius:10px;
-  font-weight:bold;
-  cursor:pointer;
+.call-avatar {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255,255,255,0.2);
+  z-index: 2;
+  position: relative;
 }
 
-.accept-call-btn{
-  background:#22c55e;
-  color:white;
-  border:none;
-  padding:12px 24px;
-  border-radius:10px;
-  font-weight:bold;
-  cursor:pointer;
+.pulse-ring {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 2px solid #6366f1;
+  animation: pulse 1.8s infinite ease-out;
+  z-index: 1;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+.call-user-name {
+  font-size: 24px;
+  font-weight: 700;
+  margin-top: 20px;
+}
+
+.call-status-label {
+  font-size: 14px;
+  color: #a1a1aa;
+  margin-top: 6px;
+}
+
+.call-timer {
+  font-size: 14px;
+  color: #22c55e;
+  margin-top: 6px;
+  font-weight: 600;
+  display: none;
+}
+
+/* Video Container Grid */
+.video-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: none;
+}
+
+#remoteVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#localVideo {
+  position: absolute;
+  top: 40px;
+  right: 20px;
+  width: 110px;
+  height: 160px;
+  border-radius: 16px;
+  object-fit: cover;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.2);
+  z-index: 3;
+}
+
+/* Controls Toolbar */
+.call-controls {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 12px 28px;
+  border-radius: 40px;
+  backdrop-filter: blur(20px);
+}
+
+.icon-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.icon-btn.off {
+  background: #ffffff;
+  color: #000;
+}
+
+.btn-end {
+  background: #ef4444 !important;
+  color: white !important;
+}
+
+.btn-accept {
+  background: #22c55e !important;
+  color: white !important;
 }
 </style>
 </head>
@@ -221,7 +327,7 @@ video{
 <div class="header">
   <div class="user-info">
     <a href="javascript:history.back()" class="back-icon">←</a>
-    <img id="userAvatar" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=4f46e5&color=fff" alt="Profile">
+    <img id="userAvatar" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Profile">
     <div class="user-details">
       <div class="user-title" id="chatUserName">Loading...</div>
       <div class="status-text" id="userStatus">Offline</div>
@@ -238,24 +344,41 @@ video{
 
 <!-- Input Form Section -->
 <form id="messageForm" class="input-container">
-  <input type="text" id="messageInput" class="message-input" placeholder="Type a message..." autocomplete="off" required>
-  <button type="submit" id="sendBtn" class="send-btn">Send</button>
+  <input type="text" id="messageInput" class="message-input" placeholder="Message..." autocomplete="off" required>
+  <button type="submit" class="send-btn">Send</button>
 </form>
 
-<!-- Call Overlay Modal -->
+<!-- INSTAGRAM-LIKE CALL MODAL -->
 <div class="call-modal" id="callModal">
-  <h2 id="callModalTitle">Calling...</h2>
-  <div class="video-grid">
-    <video id="localVideo" autoplay playsinline muted></video>
+  <div class="call-bg-blur" id="callBgBlur"></div>
+
+  <!-- Video Layers -->
+  <div class="video-container" id="videoContainer">
     <video id="remoteVideo" autoplay playsinline></video>
+    <video id="localVideo" autoplay playsinline muted></video>
   </div>
-  <div class="modal-btn-group">
-    <button class="accept-call-btn" id="acceptCallBtn" style="display:none;">Answer</button>
-    <button class="end-call-btn" id="endCallBtn">End Call</button>
+
+  <!-- Audio / Initial View -->
+  <div class="call-content" id="callContent">
+    <div class="call-avatar-wrapper">
+      <div class="pulse-ring" id="pulseRing"></div>
+      <img id="callUserAvatar" class="call-avatar" src="https://ui-avatars.com/api/?name=User" alt="Avatar">
+    </div>
+    <div class="call-user-name" id="callUserName">User</div>
+    <div class="call-status-label" id="callStatusLabel">Ringing...</div>
+    <div class="call-timer" id="callTimer">00:00</div>
+  </div>
+
+  <!-- Instagram Style Toolbar -->
+  <div class="call-controls">
+    <button class="icon-btn" id="toggleMicBtn">🎙️</button>
+    <button class="icon-btn btn-accept" id="acceptCallBtn" style="display:none;">📞</button>
+    <button class="icon-btn" id="toggleCamBtn" style="display:none;">📹</button>
+    <button class="icon-btn btn-end" id="endCallBtn">❌</button>
   </div>
 </div>
 
- <script type="module">
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import {
@@ -286,6 +409,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// DOM Elements
 const chatUserName = document.getElementById("chatUserName");
 const userAvatar = document.getElementById("userAvatar");
 const userStatus = document.getElementById("userStatus");
@@ -293,12 +417,22 @@ const chatBox = document.getElementById("chatBox");
 const messageForm = document.getElementById("messageForm");
 const messageInput = document.getElementById("messageInput");
 
+// Call Modal Elements
 const callModal = document.getElementById("callModal");
-const callModalTitle = document.getElementById("callModalTitle");
+const callBgBlur = document.getElementById("callBgBlur");
+const callUserAvatar = document.getElementById("callUserAvatar");
+const callUserName = document.getElementById("callUserName");
+const callStatusLabel = document.getElementById("callStatusLabel");
+const callTimer = document.getElementById("callTimer");
+const videoContainer = document.getElementById("videoContainer");
+const pulseRing = document.getElementById("pulseRing");
+
 const localVideo = document.getElementById("localVideo");
 const remoteVideo = document.getElementById("remoteVideo");
 const endCallBtn = document.getElementById("endCallBtn");
 const acceptCallBtn = document.getElementById("acceptCallBtn");
+const toggleMicBtn = document.getElementById("toggleMicBtn");
+const toggleCamBtn = document.getElementById("toggleCamBtn");
 
 const urlParams = new URLSearchParams(window.location.search);
 let roomId = urlParams.get("roomId");
@@ -308,6 +442,9 @@ let targetUid = urlParams.get("userId");
 let currentUser = null;
 let peerConnection = null;
 let localStream = null;
+let timerInterval = null;
+let audioContext = null;
+let ringtoneOscillator = null;
 
 const rtcConfig = {
   iceServers: [
@@ -316,7 +453,6 @@ const rtcConfig = {
   ]
 };
 
-// Helper: Guarantee same Room ID on both devices
 function getConsistentRoomId(uid1, uid2) {
     return [uid1, uid2].sort().join("_");
 }
@@ -342,6 +478,7 @@ onAuthStateChanged(auth, async (user) => {
     listenForIncomingCalls();
 });
 
+// Presence System
 function setupUserPresence() {
     const userRef = doc(db, "users", currentUser.uid);
     updateDoc(userRef, { isOnline: true, lastSeen: serverTimestamp() }).catch(() => {});
@@ -353,7 +490,11 @@ function setupUserPresence() {
 function resolveUserAndPresence() {
     if (friendName) {
         chatUserName.innerText = friendName;
-        userAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(friendName)}&background=4f46e5&color=fff`;
+        callUserName.innerText = friendName;
+        const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(friendName)}&background=6366f1&color=fff`;
+        userAvatar.src = avatarUrl;
+        callUserAvatar.src = avatarUrl;
+        callBgBlur.style.backgroundImage = `url(${avatarUrl})`;
     }
 
     if (targetUid) {
@@ -362,10 +503,12 @@ function resolveUserAndPresence() {
                 const data = docSnap.data();
                 const name = data.username || friendName || "User";
                 chatUserName.innerText = name;
-                
-                if (data.photoURL || data.profilePic) {
-                    userAvatar.src = data.photoURL || data.profilePic;
-                }
+                callUserName.innerText = name;
+
+                const avatar = data.photoURL || data.profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff`;
+                userAvatar.src = avatar;
+                callUserAvatar.src = avatar;
+                callBgBlur.style.backgroundImage = `url(${avatar})`;
 
                 if (data.isOnline) {
                     userStatus.innerText = "Online";
@@ -383,6 +526,7 @@ function resolveUserAndPresence() {
     }
 }
 
+// Chat System
 function listenForMessages() {
     if (!roomId) return;
     const q = query(
@@ -417,32 +561,69 @@ messageForm.addEventListener("submit", async (e) => {
     });
 });
 
-// Call Buttons
+// Sound Generator (Procedural Ringtone)
+function playRingtone() {
+    try {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let osc = audioContext.createOscillator();
+        let gain = audioContext.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, audioContext.currentTime); 
+        gain.gain.setValueAtTime(0.1, audioContext.currentTime);
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+        osc.start();
+        ringtoneOscillator = osc;
+    } catch(e) {}
+}
+
+function stopRingtone() {
+    if (ringtoneOscillator) {
+        try { ringtoneOscillator.stop(); } catch(e){}
+        ringtoneOscillator = null;
+    }
+}
+
+// Timer Counter
+function startTimer() {
+    let seconds = 0;
+    callTimer.style.display = "block";
+    pulseRing.style.display = "none";
+    timerInterval = setInterval(() => {
+        seconds++;
+        let mins = Math.floor(seconds / 60);
+        let secs = seconds % 60;
+        callTimer.innerText = `${mins < 10 ? '0' + mins : mins}:${secs < 10 ? '0' + secs : secs}`;
+    }, 1000);
+}
+
+// Call Logic
 document.getElementById("audioCallBtn").onclick = () => startCall(false);
 document.getElementById("videoCallBtn").onclick = () => startCall(true);
 
 async function startCall(isVideo) {
-    if (!roomId) {
-        alert("Chat room ID missing.");
-        return;
-    }
+    if (!roomId) return;
 
     try {
         localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
     } catch (err) {
         try {
             localStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
-            alert("Camera denied or unavailable. Calling Audio only.");
+            isVideo = false;
         } catch (audioErr) {
-            alert("Camera/Mic permissions required.");
+            alert("Permissions required for microphone/camera.");
             return;
         }
     }
 
-    localVideo.srcObject = localStream;
     callModal.style.display = "flex";
-    callModalTitle.innerText = isVideo ? "Calling Video..." : "Calling Audio...";
+    callStatusLabel.innerText = "Calling...";
     acceptCallBtn.style.display = "none";
+    toggleCamBtn.style.display = isVideo ? "flex" : "none";
+    videoContainer.style.display = isVideo ? "block" : "none";
+
+    localVideo.srcObject = localStream;
+    playRingtone();
 
     peerConnection = new RTCPeerConnection(rtcConfig);
     localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
@@ -455,7 +636,6 @@ async function startCall(isVideo) {
     const offerCandidatesRef = collection(callDocRef, "offerCandidates");
     const answerCandidatesRef = collection(callDocRef, "answerCandidates");
 
-    // Clear old candidates
     const oldOffers = await getDocs(offerCandidatesRef);
     oldOffers.forEach(async (d) => await deleteDoc(d.ref));
     const oldAnswers = await getDocs(answerCandidatesRef);
@@ -480,9 +660,11 @@ async function startCall(isVideo) {
     onSnapshot(callDocRef, async (snapshot) => {
         const data = snapshot.data();
         if (data && data.answer && !peerConnection.currentRemoteDescription) {
+            stopRingtone();
             const answer = new RTCSessionDescription(data.answer);
             await peerConnection.setRemoteDescription(answer);
-            callModalTitle.innerText = "Connected";
+            callStatusLabel.innerText = "Connected";
+            startTimer();
         }
         if (!data || data.status === "ended") {
             closeCallUI();
@@ -507,13 +689,17 @@ function listenForIncomingCalls() {
         const data = snapshot.data();
 
         if (data.callerId !== currentUser.uid && data.status === "calling") {
+            playRingtone();
             callModal.style.display = "flex";
-            callModalTitle.innerText = `Incoming ${data.type} Call...`;
-            acceptCallBtn.style.display = "inline-block";
+            callStatusLabel.innerText = `Incoming ${data.type} call...`;
+            acceptCallBtn.style.display = "flex";
+            toggleCamBtn.style.display = data.type === "video" ? "flex" : "none";
+            videoContainer.style.display = data.type === "video" ? "block" : "none";
 
             acceptCallBtn.onclick = async () => {
+                stopRingtone();
                 acceptCallBtn.style.display = "none";
-                callModalTitle.innerText = "Connecting...";
+                callStatusLabel.innerText = "Connecting...";
 
                 try {
                     localStream = await navigator.mediaDevices.getUserMedia({
@@ -521,12 +707,7 @@ function listenForIncomingCalls() {
                         audio: true
                     });
                 } catch (err) {
-                    try {
-                        localStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
-                    } catch (audioErr) {
-                        alert("Microphone permission required.");
-                        return;
-                    }
+                    localStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
                 }
 
                 localVideo.srcObject = localStream;
@@ -556,7 +737,8 @@ function listenForIncomingCalls() {
                     status: "connected"
                 });
 
-                callModalTitle.innerText = "Connected";
+                callStatusLabel.innerText = "Connected";
+                startTimer();
 
                 onSnapshot(offerCandidatesRef, (snapshot) => {
                     snapshot.docChanges().forEach((change) => {
@@ -572,6 +754,28 @@ function listenForIncomingCalls() {
     });
 }
 
+// Controls Logic
+toggleMicBtn.onclick = () => {
+    if (localStream) {
+        const audioTrack = localStream.getAudioTracks()[0];
+        if (audioTrack) {
+            audioTrack.enabled = !audioTrack.enabled;
+            toggleMicBtn.classList.toggle("off", !audioTrack.enabled);
+            toggleMicBtn.innerText = audioTrack.enabled ? "🎙️" : "🔇";
+        }
+    }
+};
+
+toggleCamBtn.onclick = () => {
+    if (localStream) {
+        const videoTrack = localStream.getVideoTracks()[0];
+        if (videoTrack) {
+            videoTrack.enabled = !videoTrack.enabled;
+            toggleCamBtn.classList.toggle("off", !videoTrack.enabled);
+        }
+    }
+};
+
 endCallBtn.onclick = async () => {
     if (roomId) {
         const callDocRef = doc(db, "chatRooms", roomId, "calls", "currentCall");
@@ -581,6 +785,8 @@ endCallBtn.onclick = async () => {
 };
 
 function closeCallUI() {
+    stopRingtone();
+    if (timerInterval) clearInterval(timerInterval);
     if (localStream) {
         localStream.getTracks().forEach(track => track.stop());
     }
@@ -588,9 +794,11 @@ function closeCallUI() {
         peerConnection.close();
     }
     callModal.style.display = "none";
+    callTimer.innerText = "00:00";
+    callTimer.style.display = "none";
+    pulseRing.style.display = "block";
 }
 </script>
-
 
 </body>
 </html>

@@ -128,13 +128,20 @@ body{
 }
 
 .call-log-msg {
-  align-self: center !important;
-  background: #334155 !important;
-  color: #cbd5e1 !important;
   font-size: 13px !important;
   border-radius: 12px !important;
-  padding: 6px 14px !important;
-  text-align: center;
+  padding: 8px 14px !important;
+  user-select: none;
+  transition: transform 0.1s ease, opacity 0.2s;
+}
+
+.clickable-call-log {
+  cursor: pointer;
+}
+
+.clickable-call-log:active {
+  transform: scale(0.96);
+  opacity: 0.8;
 }
 
 .input-container{
@@ -453,7 +460,7 @@ let peerConnection = null;
 let localStream = null;
 let timerInterval = null;
 let callDurationSeconds = 0;
-let isCallConnected = false; // Flag to track actual active call
+let isCallConnected = false;
 let audioContext = null;
 let ringtoneOscillator = null;
 
@@ -537,7 +544,7 @@ function resolveUserAndPresence() {
     }
 }
 
-// Chat System with Call Log UI
+// Chat System with Call Log UI & Tap to Recall
 function listenForMessages() {
     if (!roomId) return;
     const q = query(
@@ -554,11 +561,34 @@ function listenForMessages() {
 
             if (msg.isCallLog) {
                 msgDiv.classList.add("message", "call-log-msg");
+                
+                const isVideo = msg.callType === "Video" || (msg.text && msg.text.toLowerCase().includes("video"));
+
+                if (isMe) {
+                    msgDiv.style.alignSelf = "flex-end";
+                    msgDiv.style.background = "#312e81";
+                    msgDiv.style.color = "#c7d2fe";
+                    
+                    let callLabel = msg.text.replace("Missed", "Unanswered");
+                    msgDiv.innerText = `↗️ Outgoing ${callLabel.replace('📞 ', '')}`;
+                } else {
+                    msgDiv.style.alignSelf = "flex-start";
+                    msgDiv.style.background = "#334155";
+                    msgDiv.style.color = "#cbd5e1";
+
+                    // Tap to Call back on Missed/Incoming
+                    msgDiv.classList.add("clickable-call-log");
+                    msgDiv.innerText = `↙️ ${msg.text} • Tap to call back`;
+
+                    msgDiv.onclick = () => {
+                        startCall(isVideo);
+                    };
+                }
             } else {
                 msgDiv.classList.add("message", isMe ? "my-msg" : "other-msg");
+                msgDiv.innerText = msg.text || "";
             }
 
-            msgDiv.innerText = msg.text || "";
             chatBox.appendChild(msgDiv);
         });
         chatBox.scrollTop = chatBox.scrollHeight;
@@ -583,19 +613,23 @@ async function sendCallLogMessage(callType, status, durationSec = 0) {
     if (!roomId) return;
 
     let text = "";
+    const typeStr = callType === 'video' ? 'Video' : 'Audio';
+
     if (status === "connected") {
         let mins = Math.floor(durationSec / 60);
         let secs = durationSec % 60;
         let timeStr = `${mins < 10 ? '0' + mins : mins}:${secs < 10 ? '0' + secs : secs}`;
-        text = `📞 ${callType === 'video' ? 'Video' : 'Audio'} Call ended • ${timeStr}`;
+        text = `📞 ${typeStr} Call ended • ${timeStr}`;
     } else {
-        text = `🚫 Missed ${callType === 'video' ? 'Video' : 'Audio'} Call`;
+        text = `🚫 Missed ${typeStr} Call`;
     }
 
     await addDoc(collection(db, "chatRooms", roomId, "messages"), {
         text: text,
         senderId: currentUser.uid,
         isCallLog: true,
+        callStatus: status,
+        callType: typeStr,
         timestamp: serverTimestamp()
     });
 }
@@ -821,7 +855,6 @@ endCallBtn.onclick = async () => {
     if (roomId) {
         const callDocRef = doc(db, "chatRooms", roomId, "calls", "currentCall");
         
-        // Push Call duration log to chat box
         const isVideo = toggleCamBtn.style.display !== "none";
         if (isCallConnected) {
             await sendCallLogMessage(isVideo ? "video" : "audio", "connected", callDurationSeconds);

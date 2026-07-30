@@ -453,6 +453,7 @@ let peerConnection = null;
 let localStream = null;
 let timerInterval = null;
 let callDurationSeconds = 0;
+let isCallConnected = false; // Flag to track actual active call
 let audioContext = null;
 let ringtoneOscillator = null;
 
@@ -624,6 +625,7 @@ function stopRingtone() {
 
 // Timer Counter
 function startTimer() {
+    isCallConnected = true;
     callDurationSeconds = 0;
     callTimer.style.display = "block";
     pulseRing.style.display = "none";
@@ -821,7 +823,7 @@ endCallBtn.onclick = async () => {
         
         // Push Call duration log to chat box
         const isVideo = toggleCamBtn.style.display !== "none";
-        if (callStatusLabel.innerText === "Connected") {
+        if (isCallConnected) {
             await sendCallLogMessage(isVideo ? "video" : "audio", "connected", callDurationSeconds);
         } else {
             await sendCallLogMessage(isVideo ? "video" : "audio", "missed");
@@ -833,6 +835,7 @@ endCallBtn.onclick = async () => {
 };
 
 function closeCallUI() {
+    isCallConnected = false;
     stopRingtone();
     if (timerInterval) clearInterval(timerInterval);
     if (localStream) {

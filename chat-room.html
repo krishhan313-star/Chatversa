@@ -19,7 +19,7 @@ body{
   background:#0f172a;
   color:white;
   height: 100vh;
-  height: 100dvh; /* Dynamic Height Fix for Chrome Mobile */
+  height: 100dvh;
   display:flex;
   flex-direction:column;
   overflow:hidden;
@@ -99,10 +99,6 @@ body{
   transition:0.2s;
 }
 
-.call-btn:hover{
-  opacity:0.8;
-}
-
 /* Chat Messages Area */
 .chat-box{
   flex:1;
@@ -140,17 +136,6 @@ body{
   border-bottom-left-radius:4px;
 }
 
-.call-log-msg {
-  font-size: 13px !important;
-  border-radius: 12px !important;
-  padding: 8px 14px !important;
-}
-
-.clickable-call-log {
-  cursor: pointer;
-}
-
-/* SNAPCHAT SNAP BUTTON IN CHAT */
 .snap-msg-btn {
   background: #ef4444 !important;
   color: white !important;
@@ -293,12 +278,6 @@ body{
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: background 0.2s, color 0.2s;
-}
-
-.plus-btn:hover {
-  background: #334155;
-  color: white;
 }
 
 .plus-menu {
@@ -324,11 +303,6 @@ body{
   color: white;
   font-size: 14px;
   cursor: pointer;
-  transition: background 0.2s;
-}
-
-.plus-menu-item:hover {
-  background: #334155;
 }
 
 .chat-input-wrapper {
@@ -360,14 +334,6 @@ body{
   font-size: 18px;
   cursor: pointer;
   padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.2s;
-}
-
-.camera-btn:hover {
-  color: white;
 }
 
 .dynamic-action-btn {
@@ -383,15 +349,10 @@ body{
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: background 0.25s ease, transform 0.1s ease;
 }
 
 .dynamic-action-btn.is-typing {
   background: #6366f1;
-}
-
-.dynamic-action-btn:active {
-  transform: scale(0.92);
 }
 
 /* CALL MODAL */
@@ -451,14 +412,6 @@ body{
   font-size: 14px;
   color: #a1a1aa;
   margin-top: 6px;
-}
-
-.call-timer {
-  font-size: 14px;
-  color: #22c55e;
-  margin-top: 6px;
-  font-weight: 600;
-  display: none;
 }
 
 .video-container {
@@ -546,7 +499,7 @@ body{
   <img id="snapImageViewer" src="" alt="View Snap">
 </div>
 
-<!-- Header (Theme Button Removed) -->
+<!-- Header -->
 <div class="header">
   <div class="user-info">
     <a href="javascript:history.back()" class="back-icon">←</a>
@@ -572,10 +525,8 @@ body{
 <!-- CHATVERSA INPUT BAR -->
 <form id="messageForm" class="input-container">
   
-  <!-- WhatsApp Style Plus Button -->
   <button type="button" class="plus-btn" id="plusBtn" title="Attachments">+</button>
 
-  <!-- Popup Menu for Plus Options -->
   <div class="plus-menu" id="plusMenu">
     <div class="plus-menu-item" id="optionEmoji"><span>😃</span> Emoji & Stickers</div>
     <div class="plus-menu-item" id="optionPicture"><span>🖼️</span> Pictures</div>
@@ -583,14 +534,11 @@ body{
     <div class="plus-menu-item" id="optionLocation"><span>📍</span> Location</div>
   </div>
 
-  <!-- Capsule Input Box -->
   <div class="chat-input-wrapper">
     <input type="text" id="messageInput" class="message-input" placeholder="Message..." autocomplete="off">
-    <!-- Camera Icon Inside Right Edge for Live Snap -->
     <button type="button" class="camera-btn" id="cameraBtn" title="Open Camera">📷</button>
   </div>
 
-  <!-- Dynamic Mic / Paper Plane Button -->
   <button type="submit" class="dynamic-action-btn" id="actionBtn" title="Voice Note">🎤</button>
 </form>
 
@@ -609,13 +557,11 @@ body{
     </div>
     <div class="call-user-name" id="callUserName">User</div>
     <div class="call-status-label" id="callStatusLabel">Ringing...</div>
-    <div class="call-timer" id="callTimer">00:00</div>
   </div>
 
   <div class="call-controls">
     <button class="icon-btn" id="toggleMicBtn">🎙️</button>
     <button class="icon-btn btn-accept" id="acceptCallBtn" style="display:none;">📞</button>
-    <button class="icon-btn" id="toggleCamBtn" style="display:none;">📹</button>
     <button class="icon-btn btn-end" id="endCallBtn">❌</button>
   </div>
 </div>
@@ -634,7 +580,6 @@ import {
   updateDoc,
   setDoc,
   deleteDoc,
-  getDocs,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
@@ -687,15 +632,8 @@ const callBgBlur = document.getElementById("callBgBlur");
 const callUserAvatar = document.getElementById("callUserAvatar");
 const callUserName = document.getElementById("callUserName");
 const callStatusLabel = document.getElementById("callStatusLabel");
-const callTimer = document.getElementById("callTimer");
-const videoContainer = document.getElementById("videoContainer");
-
-const localVideo = document.getElementById("localVideo");
-const remoteVideo = document.getElementById("remoteVideo");
-const endCallBtn = document.getElementById("endCallBtn");
 const acceptCallBtn = document.getElementById("acceptCallBtn");
-const toggleMicBtn = document.getElementById("toggleMicBtn");
-const toggleCamBtn = document.getElementById("toggleCamBtn");
+const endCallBtn = document.getElementById("endCallBtn");
 
 const urlParams = new URLSearchParams(window.location.search);
 let roomId = urlParams.get("roomId");
@@ -787,7 +725,7 @@ pictureInput.onchange = (e) => {
     }
 };
 
-// Option 3: FIX FOR DOCUMENTS
+// Option 3: Documents
 document.getElementById("optionDocument").onclick = () => documentInput.click();
 
 documentInput.onchange = (e) => {
@@ -807,24 +745,42 @@ documentInput.onchange = (e) => {
     }
 };
 
-// Option 4: FIX FOR LOCATION
+// Option 4: FULLY WORKING LOCATION SHARE
 document.getElementById("optionLocation").onclick = () => {
-    if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(async (position) => {
-            const locUrl = `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}`;
+    plusMenu.style.display = "none";
+    if (!("geolocation" in navigator)) {
+        alert("Geolocation is not supported by your browser.");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        async (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            const mapUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+
             await addDoc(collection(db, "chatRooms", roomId, "messages"), {
-                text: `📍 My Live Location: ${locUrl}`,
                 isLocation: true,
-                locUrl: locUrl,
+                lat: lat,
+                lng: lng,
+                locUrl: mapUrl,
                 senderId: currentUser.uid,
                 timestamp: serverTimestamp()
             });
-        }, (err) => {
-            alert("Could not retrieve location. Please turn on GPS permissions.");
-        });
-    } else {
-        alert("Geolocation not supported on this browser.");
-    }
+        },
+        (error) => {
+            let errorMsg = "Unable to fetch location.";
+            if (error.code === 1) errorMsg = "Location permission denied. Please allow GPS access in your browser settings.";
+            else if (error.code === 2) errorMsg = "Location unavailable. Please check device GPS.";
+            else if (error.code === 3) errorMsg = "Location request timed out. Try again.";
+            alert(errorMsg);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+    );
 };
 
 // REAL CAMERA STREAM FOR SNAP
@@ -883,7 +839,7 @@ sendSnapBtn.onclick = async () => {
     }
 };
 
-// Presence & Resolve
+// User Presence
 function setupUserPresence() {
     const userRef = doc(db, "users", currentUser.uid);
     updateDoc(userRef, { isOnline: true, lastSeen: serverTimestamp() }).catch(() => {});
@@ -923,7 +879,7 @@ function resolveUserAndPresence() {
     }
 }
 
-// Chat Listener
+// Chat Messages Listener
 function listenForMessages() {
     if (!roomId) return;
     const q = query(
@@ -983,7 +939,20 @@ function listenForMessages() {
                 msgDiv.innerHTML = `📄 <a href="${msg.fileUrl}" download="${msg.fileName}" style="color:white; text-decoration:underline;">${msg.fileName}</a>`;
             } else if (msg.isLocation) {
                 msgDiv.classList.add("message", isMe ? "my-msg" : "other-msg");
-                msgDiv.innerHTML = `📍 <a href="${msg.locUrl}" target="_blank" style="color:white; text-decoration:underline;">View Shared Location</a>`;
+                msgDiv.style.padding = "10px 14px";
+                msgDiv.innerHTML = `
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                        <div style="display:flex; align-items:center; gap:6px; font-weight:600;">
+                            <span>📍</span> Live Location Shared
+                        </div>
+                        <div style="font-size:12px; opacity:0.8;">
+                            ${msg.lat ? `Lat: ${msg.lat.toFixed(4)}, Lng: ${msg.lng.toFixed(4)}` : 'Google Maps Location'}
+                        </div>
+                        <a href="${msg.locUrl}" target="_blank" style="margin-top:4px; display:inline-block; background:rgba(255,255,255,0.2); color:white; padding:6px 12px; border-radius:12px; text-decoration:none; text-align:center; font-size:13px; font-weight:bold;">
+                            🗺️ Open in Google Maps
+                        </a>
+                    </div>
+                `;
             } else if (msg.imageUrl) {
                 msgDiv.classList.add("message", isMe ? "my-msg" : "other-msg");
                 msgDiv.style.padding = "6px";
@@ -1021,7 +990,7 @@ messageForm.addEventListener("submit", async (e) => {
     }
 });
 
-// Audio/Video Call System
+// Call System
 document.getElementById("audioCallBtn").onclick = () => startCall(false);
 document.getElementById("videoCallBtn").onclick = () => startCall(true);
 
@@ -1036,14 +1005,9 @@ async function startCall(isVideo) {
 
     callModal.style.display = "flex";
     callStatusLabel.innerText = "Calling...";
-    localVideo.srcObject = localStream;
 
     peerConnection = new RTCPeerConnection(rtcConfig);
     localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-
-    peerConnection.ontrack = (event) => {
-        remoteVideo.srcObject = event.streams[0];
-    };
 
     const callDocRef = doc(db, "chatRooms", roomId, "calls", "currentCall");
     const offer = await peerConnection.createOffer();
@@ -1073,14 +1037,9 @@ function listenForIncomingCalls() {
             acceptCallBtn.onclick = async () => {
                 acceptCallBtn.style.display = "none";
                 localStream = await navigator.mediaDevices.getUserMedia({ video: data.type === "video", audio: true });
-                localVideo.srcObject = localStream;
 
                 peerConnection = new RTCPeerConnection(rtcConfig);
                 localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-
-                peerConnection.ontrack = (event) => {
-                    remoteVideo.srcObject = event.streams[0];
-                };
 
                 await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
                 const answer = await peerConnection.createAnswer();

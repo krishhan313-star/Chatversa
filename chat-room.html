@@ -255,7 +255,7 @@ video{
   </div>
 </div>
 
-<script type="module">
+ <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 import {
@@ -268,6 +268,8 @@ import {
   onSnapshot,
   updateDoc,
   setDoc,
+  deleteDoc,
+  getDocs,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
@@ -299,7 +301,7 @@ const endCallBtn = document.getElementById("endCallBtn");
 const acceptCallBtn = document.getElementById("acceptCallBtn");
 
 const urlParams = new URLSearchParams(window.location.search);
-const roomId = urlParams.get("roomId");
+let roomId = urlParams.get("roomId");
 let friendName = urlParams.get("name");
 let targetUid = urlParams.get("userId");
 
@@ -314,6 +316,11 @@ const rtcConfig = {
   ]
 };
 
+// Helper: Guarantee same Room ID on both devices
+function getConsistentRoomId(uid1, uid2) {
+    return [uid1, uid2].sort().join("_");
+}
+
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
         location.href = "index.html";
@@ -321,9 +328,12 @@ onAuthStateChanged(auth, async (user) => {
     }
     currentUser = user;
 
-    if (!targetUid && roomId) {
+    if (targetUid) {
+        roomId = getConsistentRoomId(currentUser.uid, targetUid);
+    } else if (roomId) {
         const uids = roomId.split("_");
         targetUid = uids.find(id => id !== currentUser.uid);
+        roomId = getConsistentRoomId(currentUser.uid, targetUid);
     }
 
     setupUserPresence();
@@ -332,7 +342,6 @@ onAuthStateChanged(auth, async (user) => {
     listenForIncomingCalls();
 });
 
-// Presence System
 function setupUserPresence() {
     const userRef = doc(db, "users", currentUser.uid);
     updateDoc(userRef, { isOnline: true, lastSeen: serverTimestamp() }).catch(() => {});
@@ -356,8 +365,6 @@ function resolveUserAndPresence() {
                 
                 if (data.photoURL || data.profilePic) {
                     userAvatar.src = data.photoURL || data.profilePic;
-                } else {
-                    userAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=4f46e5&color=fff`;
                 }
 
                 if (data.isOnline) {
@@ -376,8 +383,8 @@ function resolveUserAndPresence() {
     }
 }
 
-// Messages
 function listenForMessages() {
+    if (!roomId) return;
     const q = query(
         collection(db, "chatRooms", roomId, "messages"),
         orderBy("timestamp", "asc")
@@ -400,7 +407,7 @@ function listenForMessages() {
 messageForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const text = messageInput.value.trim();
-    if (!text) return;
+    if (!text || !roomId) return;
 
     messageInput.value = "";
     await addDoc(collection(db, "chatRooms", roomId, "messages"), {
@@ -410,36 +417,32 @@ messageForm.addEventListener("submit", async (e) => {
     });
 });
 
-// Audio & Video Call Logic
+// Call Buttons
 document.getElementById("audioCallBtn").onclick = () => startCall(false);
 document.getElementById("videoCallBtn").onclick = () => startCall(true);
 
 async function startCall(isVideo) {
+    if (!roomId) {
+        alert("Chat room ID missing.");
+        return;
+    }
+
     try {
-        localStream = await navigator.mediaDevices.getUserMedia({
-            video: isVideo,
-            audio: true
-        });
+        localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
     } catch (err) {
-        console.warn("Camera/Mic initial access failed, trying audio fallback...", err);
         try {
-            localStream = await navigator.mediaDevices.getUserMedia({
-                video: false,
-                audio: true
-            });
-            alert("Camera denied or unavailable. Starting Audio Call instead.");
+            localStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+            alert("Camera denied or unavailable. Calling Audio only.");
         } catch (audioErr) {
-            alert("Please allow Microphone/Camera permissions in your browser settings to make calls.");
-            console.error("Media Error:", audioErr);
+            alert("Camera/Mic permissions required.");
             return;
         }
     }
 
+    localVideo.srcObject = localStream;
     callModal.style.display = "flex";
     callModalTitle.innerText = isVideo ? "Calling Video..." : "Calling Audio...";
     acceptCallBtn.style.display = "none";
-
-    localVideo.srcObject = localStream;
 
     peerConnection = new RTCPeerConnection(rtcConfig);
     localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
@@ -451,6 +454,12 @@ async function startCall(isVideo) {
     const callDocRef = doc(db, "chatRooms", roomId, "calls", "currentCall");
     const offerCandidatesRef = collection(callDocRef, "offerCandidates");
     const answerCandidatesRef = collection(callDocRef, "answerCandidates");
+
+    // Clear old candidates
+    const oldOffers = await getDocs(offerCandidatesRef);
+    oldOffers.forEach(async (d) => await deleteDoc(d.ref));
+    const oldAnswers = await getDocs(answerCandidatesRef);
+    oldAnswers.forEach(async (d) => await deleteDoc(d.ref));
 
     peerConnection.onicecandidate = (event) => {
         if (event.candidate) {
@@ -490,6 +499,7 @@ async function startCall(isVideo) {
 }
 
 function listenForIncomingCalls() {
+    if (!roomId) return;
     const callDocRef = doc(db, "chatRooms", roomId, "calls", "currentCall");
 
     onSnapshot(callDocRef, async (snapshot) => {
@@ -512,12 +522,9 @@ function listenForIncomingCalls() {
                     });
                 } catch (err) {
                     try {
-                        localStream = await navigator.mediaDevices.getUserMedia({
-                            video: false,
-                            audio: true
-                        });
+                        localStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
                     } catch (audioErr) {
-                        alert("Microphone permission required to answer.");
+                        alert("Microphone permission required.");
                         return;
                     }
                 }
@@ -566,8 +573,10 @@ function listenForIncomingCalls() {
 }
 
 endCallBtn.onclick = async () => {
-    const callDocRef = doc(db, "chatRooms", roomId, "calls", "currentCall");
-    await setDoc(callDocRef, { status: "ended" }, { merge: true }).catch(() => {});
+    if (roomId) {
+        const callDocRef = doc(db, "chatRooms", roomId, "calls", "currentCall");
+        await setDoc(callDocRef, { status: "ended" }, { merge: true }).catch(() => {});
+    }
     closeCallUI();
 };
 
@@ -581,6 +590,7 @@ function closeCallUI() {
     callModal.style.display = "none";
 }
 </script>
+
 
 </body>
 </html>

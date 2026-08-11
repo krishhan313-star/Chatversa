@@ -20,35 +20,10 @@
             --subtext-color: #64748b;
             --card-bg: #f1f5f9;
             --header-bg: #ffffff;
-            --input-bg: #ffffff;
             --border-color: #e2e8f0;
             --msg-sent: #e2e8f0;
             --msg-received: #ffffff;
-            --sheet-bg: #ffffff;
-            --sheet-text: #1e293b;
-            --sheet-subtext: #64748b;
-            --hover-bg: rgba(0, 0, 0, 0.04);
-            --icon-bg: #f1f5f9;
-            --modal-bg: #ffffff;
             --base-font-size: 14px;
-        }
-
-        [data-theme="dark"] {
-            --bg-color: #0f172a;
-            --text-color: #f8fafc;
-            --subtext-color: #94a3b8;
-            --card-bg: #1e293b;
-            --header-bg: #0f172a;
-            --input-bg: #1e293b;
-            --border-color: #334155;
-            --msg-sent: #334155;
-            --msg-received: #1e293b;
-            --sheet-bg: #1e293b;
-            --sheet-text: #f8fafc;
-            --sheet-subtext: #94a3b8;
-            --hover-bg: rgba(255, 255, 255, 0.05);
-            --icon-bg: #334155;
-            --modal-bg: #1e293b;
         }
 
         html, body {
@@ -65,7 +40,6 @@
             align-items: center;
             justify-content: center;
             background: var(--bg-color);
-            transition: background 0.3s ease;
         }
 
         .chat-container {
@@ -100,17 +74,8 @@
             flex-shrink: 0;
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .header-right-actions {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .header-right-actions { display: flex; align-items: center; gap: 14px; }
 
         .call-btn-icon {
             font-size: 18px;
@@ -120,250 +85,131 @@
             border: none;
         }
 
-        .back-icon {
-            font-size: 20px;
-            color: var(--text-color);
-            text-decoration: none;
-        }
+        .back-icon { font-size: 20px; color: var(--text-color); text-decoration: none; }
 
         .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #cbd5e1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: #334155;
-            background-size: cover;
-            background-position: center;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: #cbd5e1; display: flex; align-items: center;
+            justify-content: center; font-weight: 700; color: #334155;
+            background-size: cover; background-position: center;
         }
 
-        .user-details h3 {
-            font-size: 16px;
-            color: var(--text-color);
-            font-weight: 700;
-        }
+        .user-details h3 { font-size: 16px; color: var(--text-color); font-weight: 700; }
 
         .messages-area {
-            flex: 1;
-            padding: 16px;
-            overflow-y: auto;
-            overscroll-behavior-y: contain;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            scroll-behavior: smooth;
+            flex: 1; padding: 16px; overflow-y: auto;
+            overscroll-behavior-y: contain; display: flex;
+            flex-direction: column; gap: 12px; scroll-behavior: smooth;
         }
 
         .date-divider {
-            align-self: center;
-            font-size: 11px;
-            font-weight: 700;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            align-self: center; font-size: 11px; font-weight: 700;
+            color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;
             margin: 8px 0;
         }
 
         .msg-bubble {
-            max-width: 80%;
-            padding: 10px 16px;
-            border-radius: 18px;
-            font-size: var(--base-font-size);
-            color: var(--text-color);
-            line-height: 1.4;
-            word-break: break-word;
+            max-width: 80%; padding: 10px 16px; border-radius: 18px;
+            font-size: var(--base-font-size); color: var(--text-color);
+            line-height: 1.4; word-break: break-word;
         }
 
-        .msg-sent {
-            align-self: flex-end;
-            background: var(--msg-sent);
-        }
-
-        .msg-received {
-            align-self: flex-start;
-            background: var(--msg-received);
-            border: 1px solid var(--border-color);
-        }
+        .msg-sent { align-self: flex-end; background: var(--msg-sent); }
+        .msg-received { align-self: flex-start; background: var(--msg-received); border: 1px solid var(--border-color); }
 
         /* SNAPCHAT CARD STYLING */
         .snap-card-wrapper {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            margin: 4px 0;
+            width: 100%; display: flex; flex-direction: column; margin: 4px 0;
         }
 
         .snap-card-wrapper.sent { align-items: flex-end; }
         .snap-card-wrapper.received { align-items: flex-start; }
 
         .snap-card {
-            width: 90%;
-            max-width: 320px;
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 14px 16px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-            border: 1px solid #e2e8f0;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            user-select: none;
+            width: 90%; max-width: 320px; background: #ffffff;
+            border-radius: 12px; padding: 14px 16px; display: flex;
+            align-items: center; gap: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0; position: relative; overflow: hidden;
+            cursor: pointer; user-select: none;
         }
 
         .snap-card::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 4px;
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
         }
 
-        .snap-card.sent::before { background: #fffc00; background-color: #e11d48; }
+        .snap-card.sent::before { background: #e11d48; }
         .snap-card.received::before { background: #0284c7; }
 
         .snap-card-icon {
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+            width: 20px; height: 20px; display: flex;
+            align-items: center; justify-content: center; flex-shrink: 0;
         }
 
-        .snap-card-text {
-            font-size: 16px;
-            font-weight: 600;
-            color: #0f172a;
-        }
+        .snap-card-text { font-size: 16px; font-weight: 600; color: #0f172a; }
 
-        /* SNAPCHAT CHAT INPUT BAR */
-        .snap-chat-bar-container {
-            position: relative;
-            width: 100%;
-            flex-shrink: 0;
-            background: #ffffff;
-        }
+        /* SNAPCHAT INPUT BAR */
+        .snap-chat-bar-container { position: relative; width: 100%; flex-shrink: 0; background: #ffffff; }
 
         .snap-chat-bar {
-            padding: 10px 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border-top: 1px solid #f1f5f9;
+            padding: 10px 12px; display: flex; align-items: center;
+            gap: 8px; border-top: 1px solid #f1f5f9;
         }
 
         .snap-cam-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #000000;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            flex-shrink: 0;
+            width: 40px; height: 40px; border-radius: 50%;
+            background: #000000; border: none; display: flex;
+            align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
         }
 
         .snap-cam-btn svg { width: 20px; height: 20px; fill: #ffffff; }
 
         .snap-pill-wrapper {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            border: 1.5px solid #d1d5db;
-            border-radius: 26px;
-            padding: 0 14px;
-            height: 40px;
-            background: #ffffff;
+            flex: 1; display: flex; align-items: center;
+            border: 1.5px solid #d1d5db; border-radius: 26px;
+            padding: 0 14px; height: 40px; background: #ffffff;
         }
 
         .snap-pill-input {
-            width: 100%;
-            border: none;
-            background: transparent;
-            outline: none;
-            font-size: 15px;
-            color: #000000;
-            font-family: inherit;
+            width: 100%; border: none; background: transparent;
+            outline: none; font-size: 15px; color: #000000; font-family: inherit;
         }
 
-        .snap-action-btn, .snap-icon-btn {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #1e293b;
-            padding: 2px;
-            flex-shrink: 0;
+        .snap-icon-btn {
+            background: transparent; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            color: #1e293b; padding: 2px; flex-shrink: 0;
         }
 
-        .snap-icon-btn svg, .snap-action-btn svg { width: 24px; height: 24px; fill: currentColor; }
+        .snap-icon-btn svg { width: 24px; height: 24px; fill: currentColor; }
 
-        /* FULLSCREEN CAMERA & VIEWER */
+        /* FULLSCREEN VIEWER & CAMERA */
         .snap-full-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100dvh;
-            background: #000000;
-            z-index: 9999;
-            display: none;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh;
+            background: #000000; z-index: 9999; display: none;
+            flex-direction: column; justify-content: space-between; align-items: center;
         }
 
-        .snap-video-preview {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-        }
+        .snap-video-preview { width: 100%; height: 100%; object-fit: cover; position: absolute; }
 
         .snap-camera-controls {
-            position: absolute;
-            bottom: 40px;
-            width: 100%;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 10000;
+            position: absolute; bottom: 40px; width: 100%;
+            display: flex; justify-content: space-around; align-items: center; z-index: 10000;
         }
 
         .snap-shutter-btn {
-            width: 76px;
-            height: 76px;
-            border-radius: 50%;
-            border: 5px solid #ffffff;
-            background: transparent;
-            cursor: pointer;
+            width: 76px; height: 76px; border-radius: 50%;
+            border: 5px solid #ffffff; background: transparent; cursor: pointer;
         }
 
         .snap-review-actions {
-            position: absolute;
-            bottom: 30px;
-            width: 90%;
-            display: flex;
-            justify-content: space-between;
-            z-index: 10000;
+            position: absolute; bottom: 30px; width: 90%;
+            display: flex; justify-content: space-between; z-index: 10000;
         }
 
         .snap-review-btn {
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
+            background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(10px);
+            color: white; border: none; padding: 12px 20px; border-radius: 20px;
+            font-size: 14px; font-weight: 600; cursor: pointer;
         }
 
         .snap-send-btn { background: #e11d48; color: white; }
@@ -374,7 +220,6 @@
 <body>
 
     <div class="chat-container">
-        
         <div class="chat-header">
             <div class="header-left">
                 <a href="#" class="back-icon">❮</a>
@@ -383,7 +228,6 @@
                     <h3 id="userName">krishan</h3>
                 </div>
             </div>
-            
             <div class="header-right-actions">
                 <button class="call-btn-icon">📞</button>
                 <button class="call-btn-icon">📹</button>
@@ -391,13 +235,14 @@
         </div>
 
         <div class="messages-area" id="messagesArea">
+            <div class="msg-bubble msg-received">Hey! Kaise ho?</div>
+            <div class="msg-bubble msg-sent">Main badhiya hu!</div>
+
             <div class="date-divider">YESTERDAY</div>
             
-            <!-- SENT SNAP CARD -->
             <div class="snap-card-wrapper sent">
                 <div class="snap-card sent">
                     <div class="snap-card-icon">
-                        <!-- Filled Red Arrow -->
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="#e11d48">
                             <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
                         </svg>
@@ -408,11 +253,9 @@
 
             <div class="date-divider">TODAY</div>
 
-            <!-- RECEIVED SNAP CARD -->
             <div class="snap-card-wrapper received">
                 <div class="snap-card received" onclick="openReceivedSnap(this)">
                     <div class="snap-card-icon">
-                        <!-- Filled Red Rounded Square -->
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="#e11d48">
                             <rect x="3" y="3" width="18" height="18" rx="5" ry="5"/>
                         </svg>
@@ -444,7 +287,6 @@
         </div>
 
         <input type="file" id="chatGalleryInput" accept="image/*" onchange="sendGallerySnap(event)">
-
     </div>
 
     <!-- CAMERA SCREEN -->
@@ -466,7 +308,7 @@
         </div>
     </div>
 
-    <!-- SNAP VIEWER SCREEN -->
+    <!-- VIEWER SCREEN -->
     <div id="snapViewerScreen" class="snap-full-screen" onclick="closeSnapViewer()">
         <img id="snapFullImg" class="snap-video-preview">
     </div>
@@ -520,7 +362,7 @@
 
         function sendSnapToChat() {
             if (!currentSnapData) return;
-            appendSentSnapCard(currentSnapData);
+            appendSnapCard(currentSnapData, 'sent');
             document.getElementById('snapReviewScreen').style.display = 'none';
             currentSnapData = null;
             scrollToBottom();
@@ -531,31 +373,32 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
-                    appendSentSnapCard(event.target.result);
+                    appendSnapCard(event.target.result, 'sent');
                     scrollToBottom();
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        function appendSentSnapCard(imgData) {
+        function appendSnapCard(imgUrl, type) {
             const area = document.getElementById('messagesArea');
-            area.innerHTML += `
-                <div class="snap-card-wrapper sent">
-                    <div class="snap-card sent" onclick="viewSnap('${imgData}')">
-                        <div class="snap-card-icon">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="#e11d48">
-                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                            </svg>
+            if (type === 'sent') {
+                area.innerHTML += `
+                    <div class="snap-card-wrapper sent">
+                        <div class="snap-card sent" onclick="viewSnap('${imgUrl}')">
+                            <div class="snap-card-icon">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="#e11d48">
+                                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                </svg>
+                            </div>
+                            <span class="snap-card-text">Delivered</span>
                         </div>
-                        <span class="snap-card-text">Delivered</span>
                     </div>
-                </div>
-            `;
+                `;
+            }
         }
 
         function openReceivedSnap(cardElem) {
-            // Demo image overlay or view image
             viewSnap('https://via.placeholder.com/600x1000/e11d48/ffffff?text=New+Snap');
             cardElem.querySelector('.snap-card-text').innerText = 'Opened';
             cardElem.querySelector('.snap-card-icon').innerHTML = `

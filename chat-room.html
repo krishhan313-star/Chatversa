@@ -1,1069 +1,1259 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat Room - Chatversa</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Chat Room - Chatversa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-<style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  -webkit-user-select: none;
-  user-select: none;
-}
+        :root {
+            --bg-color: #eef3f9;
+            --text-color: #2c3e50;
+            --subtext-color: #7f8c8d;
+            --card-bg: rgba(255, 255, 255, 0.45);
+            --header-bg: rgba(255, 255, 255, 0.65);
+            --input-bg: rgba(255, 255, 255, 0.7);
+            --border-color: rgba(255, 255, 255, 0.85);
+            --msg-sent: rgba(200, 138, 88, 0.25);
+            --msg-received: rgba(255, 255, 255, 0.75);
+            --sheet-bg: #ffffff;
+            --sheet-text: #1e293b;
+            --sheet-subtext: #64748b;
+            --hover-bg: rgba(0, 0, 0, 0.04);
+            --icon-bg: #f1f5f9;
+            --modal-bg: #ffffff;
+            --base-font-size: 14px;
+        }
 
-body{
-  background:#0f172a;
-  color:white;
-  height: 100vh;
-  height: 100dvh;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-  position: fixed;
-  width: 100%;
-  top: 0;
-  left: 0;
-}
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --text-color: #f8fafc;
+            --subtext-color: #94a3b8;
+            --card-bg: rgba(30, 41, 59, 0.55);
+            --header-bg: rgba(30, 41, 59, 0.75);
+            --input-bg: rgba(30, 41, 59, 0.8);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --msg-sent: rgba(200, 138, 88, 0.45);
+            --msg-received: rgba(51, 65, 85, 0.85);
+            --sheet-bg: #1e293b;
+            --sheet-text: #f8fafc;
+            --sheet-subtext: #94a3b8;
+            --hover-bg: rgba(255, 255, 255, 0.05);
+            --icon-bg: #334155;
+            --modal-bg: #1e293b;
+        }
 
-/* Header */
-.header{
-  background:#1e293b;
-  padding:12px 16px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  box-shadow:0 4px 12px rgba(0,0,0,.35);
-  z-index:10;
-  flex-shrink: 0;
-}
+        html, body {
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
+            overflow: hidden;
+            position: fixed;
+        }
 
-.user-info{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-color);
+            transition: background 0.3s ease;
+        }
 
-.back-icon{
-  font-size:22px;
-  cursor:pointer;
-  text-decoration:none;
-  color:white;
-  font-weight:bold;
-}
+        .aura-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        .aura-glow.top-left { background: radial-gradient(circle, #f7d9da 0%, rgba(247, 217, 218, 0) 70%); top: -150px; left: -150px; }
+        .aura-glow.bottom-right { background: radial-gradient(circle, #dce6f5 0%, rgba(220, 230, 245, 0) 70%); bottom: -150px; right: -150px; }
 
-.profile-pic {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  object-fit: cover;
-  background: #334155;
-  border: 1.5px solid #6366f1;
-}
+        .chat-container {
+            position: relative;
+            width: 100%;
+            max-width: 440px;
+            height: 100%;
+            max-height: 100dvh;
+            background: var(--card-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
 
-.user-details {
-  display: flex;
-  flex-direction: column;
-}
+        @media (min-height: 600px) and (min-width: 480px) {
+            .chat-container {
+                height: 90vh;
+                border-radius: 28px;
+                box-shadow: 0 30px 60px rgba(0, 0, 0, 0.05);
+            }
+        }
 
-.user-title{
-  font-size:16px;
-  font-weight:bold;
-}
+        .chat-header {
+            padding: 14px 18px;
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            z-index: 10;
+            flex-shrink: 0;
+        }
 
-.status-text{
-  font-size:12px;
-  color:#94a3b8;
-}
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-.status-online{
-  color:#22c55e;
-}
+        .header-right-actions {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
 
-.call-actions{
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
+        .call-btn-icon {
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--text-color);
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
 
-.call-btn{
-  background:transparent;
-  border:none;
-  color:white;
-  cursor:pointer;
-  font-size:18px;
-  padding:6px;
-  transition:0.2s;
-}
+        .call-btn-icon:hover { transform: scale(1.15); }
 
-/* Chat Messages Area */
-.chat-box{
-  flex:1;
-  min-height: 0;
-  padding:20px;
-  overflow-y:auto;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  z-index: 1;
-}
+        .back-icon {
+            font-size: 20px;
+            color: var(--text-color);
+            text-decoration: none;
+        }
 
-.message{
-  max-width:75%;
-  padding:12px 16px;
-  border-radius:18px;
-  font-size:15px;
-  line-height:1.4;
-  word-wrap:break-word;
-  -webkit-user-select: text;
-  user-select: text;
-}
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #ffffff 0%, #f5ebe6 60%, #c88a58 100%);
+            border: 1.5px solid rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #2c3e50;
+            background-size: cover;
+            background-position: center;
+        }
 
-.my-msg{
-  align-self:flex-end;
-  background:#6366f1;
-  color:white;
-  border-bottom-right-radius:4px;
-}
+        .user-details h3 {
+            font-size: 15px;
+            color: var(--text-color);
+            font-weight: 600;
+        }
 
-.other-msg{
-  align-self:flex-start;
-  background:#1e293b;
-  color:#e2e8f0;
-  border-bottom-left-radius:4px;
-}
+        .status {
+            font-size: 12px;
+            color: #10b981;
+            font-weight: 500;
+        }
 
-.snap-msg-btn {
-  background: #ef4444 !important;
-  color: white !important;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: none;
-  border-radius: 14px;
-  padding: 10px 16px;
-  font-size: 14px;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-}
+        .search-bar-container {
+            display: none;
+            padding: 8px 16px;
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
 
-/* LIVE CAMERA OVERLAY FOR SNAP */
-.camera-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: #000;
-  z-index: 99999;
-  display: none;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  padding: 40px 20px;
-}
+        .search-bar-input {
+            width: 100%;
+            padding: 8px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--input-bg);
+            color: var(--text-color);
+            outline: none;
+            font-size: 13px;
+        }
 
-#cameraFeed {
-  width: 100%;
-  height: 70vh;
-  object-fit: cover;
-  border-radius: 20px;
-  background: #1e293b;
-}
+        .messages-area {
+            flex: 1;
+            padding: 18px;
+            overflow-y: auto;
+            overscroll-behavior-y: contain;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            scroll-behavior: smooth;
+        }
 
-#capturedCanvas {
-  display: none;
-  width: 100%;
-  height: 70vh;
-  object-fit: cover;
-  border-radius: 20px;
-}
+        .msg-bubble {
+            max-width: 75%;
+            padding: 10px 16px;
+            border-radius: 18px;
+            font-size: var(--base-font-size);
+            color: var(--text-color);
+            line-height: 1.4;
+            word-break: break-word;
+        }
 
-.camera-controls {
-  display: flex;
-  width: 100%;
-  justify-content: space-around;
-  align-items: center;
-}
+        .msg-sent {
+            align-self: flex-end;
+            background: var(--msg-sent);
+            border: 1px solid rgba(200, 138, 88, 0.3);
+            border-bottom-right-radius: 4px;
+        }
 
-.snap-shutter-btn {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  border: 4px solid white;
-  background: transparent;
-  cursor: pointer;
-}
+        .msg-received {
+            align-self: flex-start;
+            background: var(--msg-received);
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 4px;
+        }
 
-.view-mode-selector {
-  display: none;
-  gap: 12px;
-  margin-bottom: 10px;
-}
+        .system-info-msg {
+            align-self: center;
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--subtext-color);
+            font-size: 11px;
+            padding: 4px 12px;
+            border-radius: 10px;
+            margin: 4px 0;
+        }
 
-.view-chip {
-  background: #334155;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 13px;
-  cursor: pointer;
-  border: 1.5px solid transparent;
-}
+        .snap-msg-img {
+            max-width: 180px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.8);
+            margin-top: 4px;
+            display: block;
+        }
 
-.view-chip.active {
-  background: #6366f1;
-  border-color: white;
-}
+        audio {
+            margin-top: 4px;
+            width: 200px;
+            height: 36px;
+        }
 
-/* FULLSCREEN SNAP VIEWER OVERLAY */
-.snap-viewer-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: #000;
-  z-index: 99999;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
+        /* SNAPCHAT CHAT BAR */
+        .snap-chat-bar-container {
+            position: relative;
+            width: 100%;
+            flex-shrink: 0;
+        }
 
-.snap-viewer-overlay img {
-  max-width: 100%;
-  max-height: 85vh;
-  object-fit: contain;
-  border-radius: 8px;
-}
+        .snap-chat-bar {
+            padding: 10px 12px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            width: 100%;
+            box-sizing: border-box;
+        }
 
-.snap-timer-badge {
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  background: rgba(255,255,255,0.2);
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: bold;
-}
+        .snap-cam-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #000000;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
 
-/* CHATVERSA INPUT BAR */
-.input-container{
-  background:#0f172a;
-  padding:10px 12px;
-  display:flex;
-  gap:8px;
-  align-items:center;
-  flex-shrink: 0;
-  z-index: 10;
-  position: relative;
-}
+        .snap-cam-btn svg { width: 20px; height: 20px; fill: #ffffff; }
 
-.plus-btn {
-  background: #1e293b;
-  border: none;
-  color: #94a3b8;
-  font-size: 22px;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
+        .snap-pill-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            border: 1.5px solid #8e95a2;
+            border-radius: 26px;
+            padding: 0 14px;
+            height: 40px;
+            box-sizing: border-box;
+            background: #ffffff;
+        }
 
-.plus-menu {
-  position: absolute;
-  bottom: 60px;
-  left: 12px;
-  background: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 16px;
-  padding: 8px 0;
-  display: none;
-  flex-direction: column;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-  z-index: 20;
-  min-width: 190px;
-}
+        .snap-pill-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 15px;
+            color: #000000;
+            font-family: inherit;
+        }
 
-.plus-menu-item {
-  padding: 10px 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: white;
-  font-size: 14px;
-  cursor: pointer;
-}
+        .snap-action-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #292d32;
+            padding: 2px;
+            flex-shrink: 0;
+            transition: color 0.2s, transform 0.2s;
+        }
 
-.chat-input-wrapper {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  background: #1e293b;
-  border-radius: 24px;
-  padding: 2px 14px;
-  border: 1px solid #334155;
-}
+        .snap-action-btn.recording {
+            color: #ef4444 !important;
+            animation: pulse 1s infinite;
+        }
 
-.message-input{
-  flex:1;
-  padding:10px 4px;
-  border:none;
-  background: transparent;
-  color:white;
-  font-size:15px;
-  outline:none;
-  -webkit-user-select: text;
-  user-select: text;
-}
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
 
-.camera-btn {
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 4px;
-}
+        .snap-action-btn svg { width: 22px; height: 22px; fill: currentColor; }
 
-.dynamic-action-btn {
-  background: #334155;
-  color: white;
-  border: none;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
+        .snap-icon-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #292d32;
+            padding: 2px;
+            flex-shrink: 0;
+        }
 
-.dynamic-action-btn.is-typing {
-  background: #6366f1;
-}
+        .snap-icon-btn svg { width: 24px; height: 24px; fill: currentColor; }
 
-/* CALL MODAL */
-.call-modal{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100vw;
-  height:100vh;
-  background:#0a0a0c;
-  display:none;
-  flex-direction:column;
-  align-items:center;
-  justify-content:space-between;
-  z-index:9999;
-  padding:50px 20px 40px;
-}
+        /* EMOJI PICKER MODAL */
+        .emoji-picker-container {
+            display: none;
+            position: absolute;
+            bottom: 60px;
+            right: 10px;
+            background: #ffffff;
+            border: 1px solid rgba(0,0,0,0.15);
+            border-radius: 16px;
+            padding: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            width: 250px;
+            max-height: 180px;
+            overflow-y: auto;
+            z-index: 90;
+        }
 
-.call-bg-blur {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  filter: blur(40px) brightness(0.3);
-  z-index: 1;
-}
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            font-size: 20px;
+            text-align: center;
+        }
 
-.call-content {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
+        .emoji-item {
+            cursor: pointer;
+            border-radius: 6px;
+            padding: 4px;
+            user-select: none;
+        }
 
-.call-avatar {
-  width: 130px;
-  height: 130px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid rgba(255,255,255,0.2);
-  z-index: 2;
-  position: relative;
-}
+        .emoji-item:hover { background: #f1f5f9; }
 
-.call-user-name {
-  font-size: 24px;
-  font-weight: 700;
-  margin-top: 20px;
-}
+        /* SNAP OVERLAYS & CAMERA SCREEN */
+        .snap-full-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100dvh;
+            background: #000000;
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-.call-status-label {
-  font-size: 14px;
-  color: #a1a1aa;
-  margin-top: 6px;
-}
+        .snap-video-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+        }
 
-.video-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-  display: none;
-}
+        .snap-camera-controls {
+            position: absolute;
+            bottom: 40px;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 10000;
+        }
 
-#remoteVideo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+        .snap-shutter-btn {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            border: 5px solid #ffffff;
+            background: transparent;
+            cursor: pointer;
+        }
 
-#localVideo {
-  position: absolute;
-  top: 40px;
-  right: 20px;
-  width: 110px;
-  height: 160px;
-  border-radius: 16px;
-  object-fit: cover;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-  border: 1px solid rgba(255,255,255,0.2);
-  z-index: 3;
-}
+        .snap-review-actions {
+            position: absolute;
+            bottom: 30px;
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            z-index: 10000;
+        }
 
-.call-controls {
-  position: relative;
-  z-index: 5;
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 12px 28px;
-  border-radius: 40px;
-  backdrop-filter: blur(20px);
-}
+        .snap-review-btn {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-.icon-btn {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+        .snap-send-btn { background: #0084ff; color: white; }
 
-.btn-end { background: #ef4444 !important; color: white !important; }
-.btn-accept { background: #22c55e !important; color: white !important; }
-</style>
+        /* MODALS & SHEETS */
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 100;
+            backdrop-filter: blur(4px);
+        }
+
+        .settings-sheet {
+            position: absolute;
+            bottom: -100%;
+            left: 0; right: 0;
+            max-height: 85vh;
+            background: var(--sheet-bg);
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            padding: 20px 16px;
+            transition: bottom 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+            z-index: 101;
+            color: var(--sheet-text);
+            overflow-y: auto;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
+        }
+
+        .sheet-handle {
+            width: 36px;
+            height: 4px;
+            background: var(--sheet-subtext);
+            opacity: 0.3;
+            border-radius: 2px;
+            margin: 0 auto 16px auto;
+        }
+
+        .profile-section { text-align: center; margin-bottom: 20px; }
+
+        .profile-img {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #ffffff 0%, #f5ebe6 60%, #c88a58 100%);
+            margin: 0 auto 8px auto;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; font-weight: 700; color: #2c3e50;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background-size: cover; background-position: center;
+        }
+
+        .profile-name { font-size: 16px; font-weight: 700; color: var(--sheet-text); }
+
+        .quick-actions-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; padding: 0 5px;
+        }
+
+        .action-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+
+        .action-circle {
+            width: 50px; height: 50px; border-radius: 50%; background: var(--icon-bg);
+            display: flex; align-items: center; justify-content: center; font-size: 20px;
+            transition: transform 0.2s;
+        }
+
+        .action-circle:hover { transform: scale(1.05); }
+
+        .action-label { font-size: 12px; color: var(--sheet-subtext); font-weight: 500; }
+
+        .options-list { display: flex; flex-direction: column; gap: 4px; }
+
+        .setting-row {
+            display: flex; align-items: center; justify-content: space-between; padding: 12px 10px;
+            border-radius: 12px; cursor: pointer; transition: background 0.2s;
+        }
+
+        .setting-row:hover { background: var(--hover-bg); }
+
+        .setting-left { display: flex; align-items: center; gap: 14px; }
+
+        .setting-icon { font-size: 20px; width: 28px; display: flex; justify-content: center; }
+
+        .setting-info h4 { font-size: 14px; font-weight: 600; color: var(--sheet-text); }
+
+        .setting-info p { font-size: 12px; color: var(--sheet-subtext); margin-top: 2px; }
+
+        .sub-modal {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 85%; background: var(--modal-bg); border-radius: 20px; padding: 20px;
+            display: none; flex-direction: column; gap: 15px; z-index: 105;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid var(--border-color);
+            transition: transform 0.2s ease;
+        }
+
+        .sub-modal.active { display: flex; transform: translate(-50%, -50%) scale(1); }
+
+        .modal-title { font-size: 16px; font-weight: 700; color: var(--sheet-text); text-align: center; }
+
+        .modal-input {
+            width: 100%; padding: 10px 14px; border-radius: 10px;
+            border: 1px solid var(--border-color); background: var(--hover-bg);
+            color: var(--sheet-text); outline: none; font-size: 14px;
+        }
+
+        .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; }
+
+        .modal-btn { padding: 8px 16px; border-radius: 10px; border: none; font-weight: 600; font-size: 13px; cursor: pointer; }
+
+        .btn-cancel { background: var(--hover-bg); color: var(--sheet-subtext); }
+
+        .btn-confirm { background: #c88a58; color: white; }
+
+        .btn-danger { background: #ef4444; color: white; }
+
+        .toggle-row { display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: var(--sheet-text); }
+
+        #bgInput, #profilePicInput, #chatGalleryInput { display: none; }
+    </style>
 </head>
-
 <body>
 
-<!-- LIVE CAMERA OVERLAY FOR REAL SNAP -->
-<div class="camera-overlay" id="cameraOverlay">
-  <video id="cameraFeed" autoplay playsinline></video>
-  <canvas id="capturedCanvas"></canvas>
+    <div class="aura-glow top-left"></div>
+    <div class="aura-glow bottom-right"></div>
 
-  <div class="view-mode-selector" id="viewModeSelector">
-    <div class="view-chip active" id="chip1x" onclick="selectLimit(1)">1x View Once</div>
-    <div class="view-chip" id="chip2x" onclick="selectLimit(2)">2x View Twice</div>
-  </div>
+    <div class="chat-container" id="chatBox">
+        
+        <div class="chat-header">
+            <div class="header-left" onclick="openDrawer()">
+                <a href="chats.html" class="back-icon" onclick="event.stopPropagation();">⬅</a>
+                <div class="avatar" id="headerAvatar">KR</div>
+                <div class="user-details">
+                    <h3 id="userName">krishhankumar708</h3>
+                    <span class="status" id="statusText">Online</span>
+                </div>
+            </div>
+            
+            <div class="header-right-actions">
+                <button class="call-btn-icon" onclick="startAudioCall(event)" title="Audio Call">📞</button>
+                <button class="call-btn-icon" onclick="startVideoCall(event)" title="Video Call">📹</button>
+                <span onclick="openDrawer()" style="color: var(--text-color); font-size: 18px; cursor: pointer;">⋮</span>
+            </div>
+        </div>
 
-  <div class="camera-controls">
-    <button style="background:none; border:none; color:white; font-size:24px;" id="closeCamBtn">❌</button>
-    <button class="snap-shutter-btn" id="shutterBtn"></button>
-    <button style="background:none; border:none; color:white; font-size:24px; display:none;" id="sendSnapBtn">🚀</button>
-  </div>
-</div>
+        <div class="search-bar-container" id="searchContainer">
+            <input type="text" class="search-bar-input" id="searchInput" placeholder="Search in conversation..." onkeyup="filterMessages()">
+        </div>
 
-<!-- Fullscreen Snap Viewer Overlay -->
-<div class="snap-viewer-overlay" id="snapViewerOverlay">
-  <div class="snap-timer-badge" id="snapTimerBadge">5s</div>
-  <img id="snapImageViewer" src="" alt="View Snap">
-</div>
+        <div class="messages-area" id="messagesArea">
+            <div class="msg-bubble msg-received">Hey! Kaise ho?</div>
+            <div class="msg-bubble msg-sent">Main badhiya hu!</div>
+        </div>
 
-<!-- Header -->
-<div class="header">
-  <div class="user-info">
-    <a href="javascript:history.back()" class="back-icon">←</a>
-    <img id="userAvatar" class="profile-pic" src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" alt="Profile">
-    <div class="user-details">
-      <div class="user-title" id="chatUserName">Loading...</div>
-      <div class="status-text" id="userStatus">Offline</div>
-    </div>
-  </div>
-  <div class="call-actions">
-    <button class="call-btn" id="audioCallBtn" title="Audio Call">📞</button>
-    <button class="call-btn" id="videoCallBtn" title="Video Call">📹</button>
-  </div>
-</div>
+        <div class="snap-chat-bar-container">
+            
+            <div class="emoji-picker-container" id="emojiPicker">
+                <div class="emoji-grid">
+                    <span class="emoji-item" onclick="addEmoji('😂')">😂</span>
+                    <span class="emoji-item" onclick="addEmoji('❤️')">❤️</span>
+                    <span class="emoji-item" onclick="addEmoji('🔥')">🔥</span>
+                    <span class="emoji-item" onclick="addEmoji('😍')">😍</span>
+                    <span class="emoji-item" onclick="addEmoji('👍')">👍</span>
+                    <span class="emoji-item" onclick="addEmoji('😊')">😊</span>
+                    <span class="emoji-item" onclick="addEmoji('😭')">😭</span>
+                    <span class="emoji-item" onclick="addEmoji('😎')">😎</span>
+                    <span class="emoji-item" onclick="addEmoji('🎉')">🎉</span>
+                    <span class="emoji-item" onclick="addEmoji('✨')">✨</span>
+                    <span class="emoji-item" onclick="addEmoji('🙏')">🙏</span>
+                    <span class="emoji-item" onclick="addEmoji('💀')">💀</span>
+                </div>
+            </div>
 
-<!-- Hidden File Inputs -->
-<input type="file" id="pictureInput" accept="image/*" style="display:none;">
-<input type="file" id="documentInput" accept=".pdf,.doc,.docx,.txt" style="display:none;">
+            <div class="snap-chat-bar">
+                <button class="snap-cam-btn" onclick="openSnapCamera()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4z"/>
+                        <path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5 5z"/>
+                    </svg>
+                </button>
 
-<!-- Chat Messages Area -->
-<div class="chat-box" id="chatBox"></div>
+                <div class="snap-pill-wrapper">
+                    <input type="text" id="msgInput" class="snap-pill-input" placeholder="Send chat" oninput="toggleActionBtn()" onkeypress="handleKey(event)" onfocus="scrollToBottom()">
+                </div>
 
-<!-- CHATVERSA INPUT BAR -->
-<form id="messageForm" class="input-container">
-  
-  <button type="button" class="plus-btn" id="plusBtn" title="Attachments">+</button>
+                <button class="snap-icon-btn" onclick="toggleEmojiPicker()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+                    </svg>
+                </button>
 
-  <div class="plus-menu" id="plusMenu">
-    <div class="plus-menu-item" id="optionEmoji"><span>😃</span> Emoji & Stickers</div>
-    <div class="plus-menu-item" id="optionPicture"><span>🖼️</span> Pictures</div>
-    <div class="plus-menu-item" id="optionDocument"><span>📄</span> Documents</div>
-    <div class="plus-menu-item" id="optionLocation"><span>📍</span> Location</div>
-  </div>
+                <button class="snap-icon-btn" onclick="document.getElementById('chatGalleryInput').click()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12zm-2.5-7l-2.5 3.01L13.5 9l-3 4h10z"/>
+                    </svg>
+                </button>
 
-  <div class="chat-input-wrapper">
-    <input type="text" id="messageInput" class="message-input" placeholder="Message..." autocomplete="off">
-    <button type="button" class="camera-btn" id="cameraBtn" title="Open Camera">📷</button>
-  </div>
+                <button class="snap-action-btn" id="actionBtn" onclick="handleActionClick()">
+                    <svg id="actionIcon" viewBox="0 0 24 24">
+                        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
 
-  <button type="submit" class="dynamic-action-btn" id="actionBtn" title="Voice Note">🎤</button>
-</form>
+        <div class="overlay" id="overlay" onclick="closeAllModals()"></div>
 
-<!-- CALL MODAL -->
-<div class="call-modal" id="callModal">
-  <div class="call-bg-blur" id="callBgBlur"></div>
+        <div class="settings-sheet" id="settingsSheet">
+            <div class="sheet-handle"></div>
+            
+            <div class="profile-section">
+                <div class="profile-img" id="sheetAvatar">KR</div>
+                <div class="profile-name" id="sheetUserName">krishhankumar708</div>
+            </div>
 
-  <div class="video-container" id="videoContainer">
-    <video id="remoteVideo" autoplay playsinline></video>
-    <video id="localVideo" autoplay playsinline muted></video>
-  </div>
+            <div class="quick-actions-grid">
+                <div class="action-item" onclick="openSubModal('profileModal')">
+                    <div class="action-circle">👤</div>
+                    <span class="action-label">Profile</span>
+                </div>
+                <div class="action-item" onclick="toggleSearchBar()">
+                    <div class="action-circle">🔍</div>
+                    <span class="action-label">Search</span>
+                </div>
+                <div class="action-item" onclick="toggleMute()">
+                    <div class="action-circle" id="muteIcon">🔔</div>
+                    <span class="action-label" id="muteLabel">Mute</span>
+                </div>
+                <div class="action-item" onclick="openSubModal('optionsModal')">
+                    <div class="action-circle">⚙️</div>
+                    <span class="action-label">Options</span>
+                </div>
+            </div>
 
-  <div class="call-content" id="callContent">
-    <div class="call-avatar-wrapper">
-      <img id="callUserAvatar" class="call-avatar" src="https://ui-avatars.com/api/?name=User" alt="Avatar">
-    </div>
-    <div class="call-user-name" id="callUserName">User</div>
-    <div class="call-status-label" id="callStatusLabel">Ringing...</div>
-  </div>
-
-  <div class="call-controls">
-    <button class="icon-btn" id="toggleMicBtn">🎙️</button>
-    <button class="icon-btn btn-accept" id="acceptCallBtn" style="display:none;">📞</button>
-    <button class="icon-btn btn-end" id="endCallBtn">❌</button>
-  </div>
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-import {
-  getFirestore,
-  collection,
-  doc,
-  addDoc,
-  query,
-  orderBy,
-  onSnapshot,
-  updateDoc,
-  setDoc,
-  deleteDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDe3ahkE9wEpUOYwt8dnUiFhUAYI1X3i7E",
-  authDomain: "chatversa-ca526.firebaseapp.com",
-  projectId: "chatversa-ca526",
-  storageBucket: "chatversa-ca526.firebasestorage.app",
-  messagingSenderId: "735371121479",
-  appId: "1:735371121479:web:230385acffc8a7c3e8f262"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-// Elements
-const chatUserName = document.getElementById("chatUserName");
-const userAvatar = document.getElementById("userAvatar");
-const userStatus = document.getElementById("userStatus");
-const chatBox = document.getElementById("chatBox");
-const messageForm = document.getElementById("messageForm");
-const messageInput = document.getElementById("messageInput");
-const actionBtn = document.getElementById("actionBtn");
-
-// Plus & Inputs
-const plusBtn = document.getElementById("plusBtn");
-const plusMenu = document.getElementById("plusMenu");
-const pictureInput = document.getElementById("pictureInput");
-const documentInput = document.getElementById("documentInput");
-const cameraBtn = document.getElementById("cameraBtn");
-
-// Camera Overlay Elements
-const cameraOverlay = document.getElementById("cameraOverlay");
-const cameraFeed = document.getElementById("cameraFeed");
-const capturedCanvas = document.getElementById("capturedCanvas");
-const shutterBtn = document.getElementById("shutterBtn");
-const closeCamBtn = document.getElementById("closeCamBtn");
-const sendSnapBtn = document.getElementById("sendSnapBtn");
-const viewModeSelector = document.getElementById("viewModeSelector");
-
-// Snap Viewer Elements
-const snapViewerOverlay = document.getElementById("snapViewerOverlay");
-const snapImageViewer = document.getElementById("snapImageViewer");
-const snapTimerBadge = document.getElementById("snapTimerBadge");
-
-// Call Modal Elements
-const callModal = document.getElementById("callModal");
-const callBgBlur = document.getElementById("callBgBlur");
-const callUserAvatar = document.getElementById("callUserAvatar");
-const callUserName = document.getElementById("callUserName");
-const callStatusLabel = document.getElementById("callStatusLabel");
-const acceptCallBtn = document.getElementById("acceptCallBtn");
-const endCallBtn = document.getElementById("endCallBtn");
-
-const urlParams = new URLSearchParams(window.location.search);
-let roomId = urlParams.get("roomId");
-let friendName = urlParams.get("name");
-let targetUid = urlParams.get("userId");
-
-let currentUser = null;
-let peerConnection = null;
-let localStream = null;
-let cameraStream = null;
-let capturedSnapData = null;
-let selectedViewLimit = 1;
-
-const rtcConfig = {
-  iceServers: [
-    { urls: "stun:stun.l.google.com:19302" },
-    { urls: "stun:stun1.1.google.com:19302" }
-  ]
-};
-
-function getConsistentRoomId(uid1, uid2) {
-    return [uid1, uid2].sort().join("_");
-}
-
-onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-        location.href = "index.html";
-        return;
-    }
-    currentUser = user;
-
-    if (targetUid) {
-        roomId = getConsistentRoomId(currentUser.uid, targetUid);
-    } else if (roomId) {
-        const uids = roomId.split("_");
-        targetUid = uids.find(id => id !== currentUser.uid);
-        roomId = getConsistentRoomId(currentUser.uid, targetUid);
-    }
-
-    setupUserPresence();
-    resolveUserAndPresence();
-    listenForMessages();
-    listenForIncomingCalls();
-});
-
-// Dynamic Mic / Send Toggle
-messageInput.addEventListener("input", () => {
-    if (messageInput.value.trim().length > 0) {
-        actionBtn.innerText = "✈️";
-        actionBtn.classList.add("is-typing");
-    } else {
-        actionBtn.innerText = "🎤";
-        actionBtn.classList.remove("is-typing");
-    }
-});
-
-// Plus Menu Toggle
-plusBtn.onclick = (e) => {
-    e.stopPropagation();
-    plusMenu.style.display = plusMenu.style.display === "flex" ? "none" : "flex";
-};
-
-document.onclick = () => {
-    plusMenu.style.display = "none";
-};
-
-// Option 1: Emoji
-document.getElementById("optionEmoji").onclick = () => {
-    messageInput.value += "😊 ";
-    messageInput.dispatchEvent(new Event('input'));
-    messageInput.focus();
-};
-
-// Option 2: Pictures
-document.getElementById("optionPicture").onclick = () => pictureInput.click();
-
-pictureInput.onchange = (e) => {
-    const file = e.target.files[0];
-    if (file && roomId) {
-        const reader = new FileReader();
-        reader.onload = async function(event) {
-            await addDoc(collection(db, "chatRooms", roomId, "messages"), {
-                imageUrl: event.target.result,
-                senderId: currentUser.uid,
-                timestamp: serverTimestamp()
-            });
-        };
-        reader.readAsDataURL(file);
-    }
-};
-
-// Option 3: Documents
-document.getElementById("optionDocument").onclick = () => documentInput.click();
-
-documentInput.onchange = (e) => {
-    const file = e.target.files[0];
-    if (file && roomId) {
-        const reader = new FileReader();
-        reader.onload = async function(event) {
-            await addDoc(collection(db, "chatRooms", roomId, "messages"), {
-                fileUrl: event.target.result,
-                fileName: file.name,
-                isDocument: true,
-                senderId: currentUser.uid,
-                timestamp: serverTimestamp()
-            });
-        };
-        reader.readAsDataURL(file);
-    }
-};
-
-// Option 4: FULLY WORKING LOCATION SHARE
-document.getElementById("optionLocation").onclick = () => {
-    plusMenu.style.display = "none";
-    if (!("geolocation" in navigator)) {
-        alert("Geolocation is not supported by your browser.");
-        return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-        async (position) => {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            const mapUrl = `https://www.google.com/maps?q=${lat},${lng}`;
-
-            await addDoc(collection(db, "chatRooms", roomId, "messages"), {
-                isLocation: true,
-                lat: lat,
-                lng: lng,
-                locUrl: mapUrl,
-                senderId: currentUser.uid,
-                timestamp: serverTimestamp()
-            });
-        },
-        (error) => {
-            let errorMsg = "Unable to fetch location.";
-            if (error.code === 1) errorMsg = "Location permission denied. Please allow GPS access in your browser settings.";
-            else if (error.code === 2) errorMsg = "Location unavailable. Please check device GPS.";
-            else if (error.code === 3) errorMsg = "Location request timed out. Try again.";
-            alert(errorMsg);
-        },
-        {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 0
-        }
-    );
-};
-
-// REAL CAMERA STREAM FOR SNAP
-cameraBtn.onclick = async () => {
-    try {
-        cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
-        cameraFeed.srcObject = cameraStream;
-        cameraOverlay.style.display = "flex";
-        cameraFeed.style.display = "block";
-        capturedCanvas.style.display = "none";
-        shutterBtn.style.display = "block";
-        sendSnapBtn.style.display = "none";
-        viewModeSelector.style.display = "none";
-    } catch (e) {
-        alert("Camera permission denied or camera not found.");
-    }
-};
-
-closeCamBtn.onclick = () => {
-    if (cameraStream) cameraStream.getTracks().forEach(t => t.stop());
-    cameraOverlay.style.display = "none";
-};
-
-shutterBtn.onclick = () => {
-    const ctx = capturedCanvas.getContext('2d');
-    capturedCanvas.width = cameraFeed.videoWidth;
-    capturedCanvas.height = cameraFeed.videoHeight;
-    ctx.drawImage(cameraFeed, 0, 0);
-    capturedSnapData = capturedCanvas.toDataURL('image/jpeg');
-
-    if (cameraStream) cameraStream.getTracks().forEach(t => t.stop());
-    cameraFeed.style.display = "none";
-    capturedCanvas.style.display = "block";
-    shutterBtn.style.display = "none";
-    sendSnapBtn.style.display = "block";
-    viewModeSelector.style.display = "flex";
-};
-
-window.selectLimit = (num) => {
-    selectedViewLimit = num;
-    document.getElementById('chip1x').classList.toggle('active', num === 1);
-    document.getElementById('chip2x').classList.toggle('active', num === 2);
-};
-
-sendSnapBtn.onclick = async () => {
-    if (capturedSnapData && roomId) {
-        await addDoc(collection(db, "chatRooms", roomId, "messages"), {
-            snapUrl: capturedSnapData,
-            senderId: currentUser.uid,
-            isSnap: true,
-            viewsLeft: selectedViewLimit,
-            maxViews: selectedViewLimit,
-            timestamp: serverTimestamp()
-        });
-        cameraOverlay.style.display = "none";
-    }
-};
-
-// User Presence
-function setupUserPresence() {
-    const userRef = doc(db, "users", currentUser.uid);
-    updateDoc(userRef, { isOnline: true, lastSeen: serverTimestamp() }).catch(() => {});
-}
-
-function resolveUserAndPresence() {
-    if (friendName) {
-        chatUserName.innerText = friendName;
-        callUserName.innerText = friendName;
-        const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(friendName)}&background=6366f1&color=fff`;
-        userAvatar.src = avatarUrl;
-        callUserAvatar.src = avatarUrl;
-        callBgBlur.style.backgroundImage = `url(${avatarUrl})`;
-    }
-
-    if (targetUid) {
-        onSnapshot(doc(db, "users", targetUid), (docSnap) => {
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                const name = data.username || friendName || "User";
-                chatUserName.innerText = name;
-                callUserName.innerText = name;
-
-                const avatar = data.photoURL || data.profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6366f1&color=fff`;
-                userAvatar.src = avatar;
-                callUserAvatar.src = avatar;
-
-                if (data.isOnline) {
-                    userStatus.innerText = "Online";
-                    userStatus.className = "status-text status-online";
-                } else {
-                    userStatus.innerText = "Offline";
-                    userStatus.className = "status-text";
-                }
-            }
-        });
-    }
-}
-
-// Chat Messages Listener
-function listenForMessages() {
-    if (!roomId) return;
-    const q = query(
-        collection(db, "chatRooms", roomId, "messages"),
-        orderBy("timestamp", "asc")
-    );
-
-    onSnapshot(q, (snapshot) => {
-        chatBox.innerHTML = "";
-        snapshot.forEach((docSnap) => {
-            const msgId = docSnap.id;
-            const msg = docSnap.data();
-            const isMe = msg.senderId === currentUser.uid;
-            const msgDiv = document.createElement("div");
-
-            if (msg.isSnap) {
-                msgDiv.classList.add("message", isMe ? "my-msg" : "other-msg");
-                msgDiv.style.padding = "6px";
-
-                if (msg.viewsLeft <= 0) {
-                    msgDiv.innerHTML = `<span style="font-size:13px; color:#94a3b8; font-style:italic;">🔥 Opened Snap</span>`;
-                } else if (isMe) {
-                    msgDiv.innerHTML = `<span style="font-size:13px; color:#c7d2fe;">🔥 Sent Snap (${msg.maxViews}x View)</span>`;
-                } else {
-                    const snapBtn = document.createElement("button");
-                    snapBtn.className = "snap-msg-btn";
-                    snapBtn.innerHTML = `🔥 View Snap (${msg.viewsLeft} Left)`;
-                    snapBtn.onclick = async () => {
-                        snapImageViewer.src = msg.snapUrl;
-                        snapViewerOverlay.style.display = "flex";
-
-                        let newViews = msg.viewsLeft - 1;
-                        await updateDoc(doc(db, "chatRooms", roomId, "messages", msgId), {
-                            viewsLeft: newViews,
-                            snapUrl: newViews <= 0 ? "" : msg.snapUrl
-                        });
-
-                        let timeLeft = 5;
-                        snapTimerBadge.innerText = `${timeLeft}s`;
-                        let countdown = setInterval(() => {
-                            timeLeft--;
-                            snapTimerBadge.innerText = `${timeLeft}s`;
-                            if (timeLeft <= 0) {
-                                clearInterval(countdown);
-                                snapViewerOverlay.style.display = "none";
-                                snapImageViewer.src = "";
-                                if (newViews <= 0) {
-                                    deleteDoc(doc(db, "chatRooms", roomId, "messages", msgId)).catch(() => {});
-                                }
-                            }
-                        }, 1000);
-                    };
-                    msgDiv.appendChild(snapBtn);
-                }
-            } else if (msg.isDocument) {
-                msgDiv.classList.add("message", isMe ? "my-msg" : "other-msg");
-                msgDiv.innerHTML = `📄 <a href="${msg.fileUrl}" download="${msg.fileName}" style="color:white; text-decoration:underline;">${msg.fileName}</a>`;
-            } else if (msg.isLocation) {
-                msgDiv.classList.add("message", isMe ? "my-msg" : "other-msg");
-                msgDiv.style.padding = "10px 14px";
-                msgDiv.innerHTML = `
-                    <div style="display:flex; flex-direction:column; gap:6px;">
-                        <div style="display:flex; align-items:center; gap:6px; font-weight:600;">
-                            <span>📍</span> Live Location Shared
+            <div class="options-list">
+                <div class="setting-row" onclick="toggleTheme()">
+                    <div class="setting-left">
+                        <span class="setting-icon">🎨</span>
+                        <div class="setting-info">
+                            <h4>Customize</h4>
+                            <p>Theme and font</p>
                         </div>
-                        <div style="font-size:12px; opacity:0.8;">
-                            ${msg.lat ? `Lat: ${msg.lat.toFixed(4)}, Lng: ${msg.lng.toFixed(4)}` : 'Google Maps Location'}
-                        </div>
-                        <a href="${msg.locUrl}" target="_blank" style="margin-top:4px; display:inline-block; background:rgba(255,255,255,0.2); color:white; padding:6px 12px; border-radius:12px; text-decoration:none; text-align:center; font-size:13px; font-weight:bold;">
-                            🗺️ Open in Google Maps
-                        </a>
                     </div>
-                `;
-            } else if (msg.imageUrl) {
-                msgDiv.classList.add("message", isMe ? "my-msg" : "other-msg");
-                msgDiv.style.padding = "6px";
-                const img = document.createElement("img");
-                img.src = msg.imageUrl;
-                img.style.maxWidth = "220px";
-                img.style.borderRadius = "14px";
-                img.style.display = "block";
-                msgDiv.appendChild(img);
+                </div>
+
+                <div class="setting-row" onclick="openWallpaperModal()">
+                    <div class="setting-left">
+                        <span class="setting-icon">🖼️</span>
+                        <div class="setting-info">
+                            <h4>Wallpaper</h4>
+                            <p id="wallpaperSubtext">Set or remove background picture</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-row" onclick="openSubModal('disappearingModal')">
+                    <div class="setting-left">
+                        <span class="setting-icon">⏱️</span>
+                        <div class="setting-info">
+                            <h4>Disappearing messages</h4>
+                            <p id="disappearingSubtext">Off</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-row" onclick="openSubModal('privacyModal')">
+                    <div class="setting-left">
+                        <span class="setting-icon">🔒</span>
+                        <div class="setting-info">
+                            <h4>Privacy & safety</h4>
+                            <p>Security settings</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-row" onclick="openSubModal('nicknameModal')">
+                    <div class="setting-left">
+                        <span class="setting-icon">🏷️</span>
+                        <div class="setting-info">
+                            <h4>Nicknames</h4>
+                            <p>Change name display</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-row" onclick="openSubModal('groupModal')">
+                    <div class="setting-left">
+                        <span class="setting-icon">👥</span>
+                        <div class="setting-info">
+                            <h4>Create a group chat</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <input type="file" id="bgInput" accept="image/*" onchange="changeBackground(event)">
+            <input type="file" id="profilePicInput" accept="image/*" onchange="changeProfilePicture(event)">
+        </div>
+
+        <input type="file" id="chatGalleryInput" accept="image/*" onchange="sendGalleryImage(event)">
+
+        <div class="sub-modal" id="profileModal">
+            <div class="modal-title">User Profile</div>
+            <button class="modal-btn btn-confirm" onclick="document.getElementById('profilePicInput').click()">🖼️ Update Profile Picture</button>
+            <input type="text" id="userBioInput" class="modal-input" placeholder="Update your Bio...">
+            <div class="modal-buttons">
+                <button class="modal-btn btn-cancel" onclick="closeSubModal('profileModal')">Cancel</button>
+                <button class="modal-btn btn-confirm" onclick="saveProfile()">Save Profile</button>
+            </div>
+        </div>
+
+        <div class="sub-modal" id="optionsModal">
+            <div class="modal-title">App Options</div>
+            <div class="toggle-row"><span>Notifications</span><input type="checkbox" id="notifToggle" checked></div>
+            <div class="toggle-row"><span>Read Receipts</span><input type="checkbox" id="readToggle" checked></div>
+            <div class="toggle-row">
+                <span>Font Size</span>
+                <select id="fontSizeSelect" class="modal-input" style="width:120px;">
+                    <option value="12px">Small</option>
+                    <option value="14px" selected>Medium</option>
+                    <option value="16px">Large</option>
+                </select>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn btn-cancel" onclick="closeSubModal('optionsModal')">Cancel</button>
+                <button class="modal-btn btn-confirm" onclick="saveOptions()">Save</button>
+            </div>
+        </div>
+
+        <div class="sub-modal" id="privacyModal">
+            <div class="modal-title">Privacy & Safety</div>
+            <div class="toggle-row"><span>Last Seen Status</span><input type="checkbox" checked></div>
+            <div class="toggle-row"><span>End-to-End Encryption</span><span style="color:#10b981; font-weight:bold;">Active</span></div>
+            <button class="modal-btn btn-danger" onclick="alert('No blocked contacts.')">Manage Blocked Contacts</button>
+            <div class="modal-buttons">
+                <button class="modal-btn btn-cancel" onclick="closeSubModal('privacyModal')">Close</button>
+            </div>
+        </div>
+
+        <div class="sub-modal" id="wallpaperModal">
+            <div class="modal-title">Wallpaper Options</div>
+            <button class="modal-btn btn-confirm" onclick="document.getElementById('bgInput').click()">📷 Select New Wallpaper</button>
+            <button class="modal-btn btn-danger" onclick="removeWallpaper()">🗑️ Remove Wallpaper</button>
+            <div class="modal-buttons">
+                <button class="modal-btn btn-cancel" onclick="closeSubModal('wallpaperModal')">Cancel</button>
+            </div>
+        </div>
+
+        <div class="sub-modal" id="nicknameModal">
+            <div class="modal-title">Set Nickname</div>
+            <input type="text" id="nicknameInput" class="modal-input" placeholder="Enter new nickname...">
+            <div class="modal-buttons">
+                <button class="modal-btn btn-cancel" onclick="closeSubModal('nicknameModal')">Cancel</button>
+                <button class="modal-btn btn-confirm" onclick="saveNickname()">Save</button>
+            </div>
+        </div>
+
+        <div class="sub-modal" id="groupModal">
+            <div class="modal-title">Create Group Chat</div>
+            <input type="text" id="groupNameInput" class="modal-input" placeholder="Enter Group Name...">
+            <div class="modal-buttons">
+                <button class="modal-btn btn-cancel" onclick="closeSubModal('groupModal')">Cancel</button>
+                <button class="modal-btn btn-confirm" onclick="createGroup()">Create</button>
+            </div>
+        </div>
+
+        <div class="sub-modal" id="disappearingModal">
+            <div class="modal-title">Disappearing Messages</div>
+            <button class="modal-btn btn-cancel" onclick="setDisappearingTimer('Off')">Off</button>
+            <button class="modal-btn btn-confirm" onclick="setDisappearingTimer('24 Hours')">24 Hours</button>
+            <button class="modal-btn btn-confirm" onclick="setDisappearingTimer('7 Days')">7 Days</button>
+            <div class="modal-buttons">
+                <button class="modal-btn btn-cancel" onclick="closeSubModal('disappearingModal')">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="snapCamScreen" class="snap-full-screen">
+        <video id="snapVideo" class="snap-video-preview" autoplay playsinline></video>
+        <div class="snap-camera-controls">
+            <button class="snap-review-btn" onclick="closeSnapCamera()">❌ Close</button>
+            <button class="snap-shutter-btn" onclick="takeSnap()"></button>
+            <div style="width:70px;"></div>
+        </div>
+    </div>
+
+    <div id="snapReviewScreen" class="snap-full-screen">
+        <img id="snapPreviewImg" class="snap-video-preview">
+        <div class="snap-review-actions">
+            <button class="snap-review-btn" onclick="saveSnapToDevice()">💾 Save</button>
+            <button class="snap-review-btn" onclick="discardSnap()">🗑️ Retake</button>
+            <button class="snap-review-btn snap-send-btn" onclick="sendSnapToChat()">🚀 Send Snap</button>
+        </div>
+    </div>
+
+    <div id="snapViewerScreen" class="snap-full-screen" onclick="closeSnapViewer()">
+        <img id="snapFullImg" class="snap-video-preview">
+    </div>
+
+    <script>
+        const sheet = document.getElementById('settingsSheet');
+        const overlay = document.getElementById('overlay');
+        let isMuted = false;
+
+        const micSVG = `<path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>`;
+        const sendSVG = `<path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>`;
+
+        function scrollToBottom() {
+            setTimeout(() => {
+                const area = document.getElementById('messagesArea');
+                area.scrollTop = area.scrollHeight;
+            }, 100);
+        }
+
+        function toggleActionBtn() {
+            const input = document.getElementById('msgInput');
+            const btn = document.getElementById('actionBtn');
+            const icon = document.getElementById('actionIcon');
+
+            if (input.value.trim().length > 0) {
+                icon.innerHTML = sendSVG;
+                btn.style.color = "#0084ff";
             } else {
-                msgDiv.classList.add("message", isMe ? "my-msg" : "other-msg");
-                msgDiv.innerText = msg.text || "";
+                icon.innerHTML = micSVG;
+                btn.style.color = "#292d32";
+            }
+        }
+
+        function toggleEmojiPicker() {
+            const picker = document.getElementById('emojiPicker');
+            picker.style.display = (picker.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function addEmoji(emoji) {
+            const input = document.getElementById('msgInput');
+            input.value += emoji;
+            toggleActionBtn();
+            document.getElementById('emojiPicker').style.display = 'none';
+            input.focus();
+        }
+
+        function sendGalleryImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgUrl = e.target.result;
+                    const area = document.getElementById('messagesArea');
+                    area.innerHTML += `
+                        <div class="msg-bubble msg-sent">
+                            <img src="${imgUrl}" class="snap-msg-img" onclick="viewFullSnap('${imgUrl}')">
+                        </div>
+                    `;
+                    scrollToBottom();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let isRecording = false;
+
+        async function handleActionClick() {
+            const input = document.getElementById('msgInput');
+            if (input.value.trim().length > 0) {
+                sendMessage();
+            } else {
+                if (!isRecording) {
+                    startVoiceRecording();
+                } else {
+                    stopVoiceRecording();
+                }
+            }
+        }
+
+        async function startVoiceRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    const area = document.getElementById('messagesArea');
+                    area.innerHTML += `
+                        <div class="msg-bubble msg-sent">
+                            🎙️ <b>Voice Note</b><br>
+                            <audio controls src="${audioUrl}"></audio>
+                        </div>
+                    `;
+                    scrollToBottom();
+                };
+
+                mediaRecorder.start();
+                isRecording = true;
+                document.getElementById('actionBtn').classList.add('recording');
+            } catch (err) {
+                alert('Microphone access denied or not available!');
+            }
+        }
+
+        function stopVoiceRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                isRecording = false;
+                document.getElementById('actionBtn').classList.remove('recording');
+            }
+        }
+
+        let currentSnapData = null;
+        const videoElem = document.getElementById('snapVideo');
+
+        async function openSnapCamera() {
+            document.getElementById('snapCamScreen').style.display = 'flex';
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+                videoElem.srcObject = stream;
+            } catch (err) {
+                alert('Unable to access camera: ' + err.message);
+                closeSnapCamera();
+            }
+        }
+
+        function closeSnapCamera() {
+            if (videoElem.srcObject) {
+                videoElem.srcObject.getTracks().forEach(track => track.stop());
+            }
+            document.getElementById('snapCamScreen').style.display = 'none';
+        }
+
+        function takeSnap() {
+            const canvas = document.createElement('canvas');
+            canvas.width = videoElem.videoWidth || 640;
+            canvas.height = videoElem.videoHeight || 480;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(videoElem, 0, 0, canvas.width, canvas.height);
+            
+            currentSnapData = canvas.toDataURL('image/png');
+            document.getElementById('snapPreviewImg').src = currentSnapData;
+            
+            closeSnapCamera();
+            document.getElementById('snapReviewScreen').style.display = 'flex';
+        }
+
+        function saveSnapToDevice() {
+            if (!currentSnapData) return;
+            const link = document.createElement('a');
+            link.href = currentSnapData;
+            link.download = 'snap_' + Date.now() + '.png';
+            link.click();
+        }
+
+        function discardSnap() {
+            currentSnapData = null;
+            document.getElementById('snapReviewScreen').style.display = 'none';
+            openSnapCamera();
+        }
+
+        function sendSnapToChat() {
+            if (!currentSnapData) return;
+            const area = document.getElementById('messagesArea');
+            area.innerHTML += `
+                <div class="msg-bubble msg-sent">
+                    📸 <b>Snap</b>
+                    <img src="${currentSnapData}" class="snap-msg-img" onclick="viewFullSnap('${currentSnapData}')">
+                </div>
+            `;
+            document.getElementById('snapReviewScreen').style.display = 'none';
+            currentSnapData = null;
+            scrollToBottom();
+        }
+
+        function viewFullSnap(url) {
+            document.getElementById('snapFullImg').src = url;
+            document.getElementById('snapViewerScreen').style.display = 'flex';
+        }
+
+        function closeSnapViewer() {
+            document.getElementById('snapViewerScreen').style.display = 'none';
+        }
+
+        function openDrawer() {
+            sheet.style.bottom = '0';
+            overlay.style.display = 'block';
+        }
+
+        function closeDrawer() {
+            sheet.style.bottom = '-100%';
+            overlay.style.display = 'none';
+        }
+
+        function closeAllModals() {
+            closeDrawer();
+            document.querySelectorAll('.sub-modal').forEach(modal => modal.classList.remove('active'));
+            document.getElementById('emojiPicker').style.display = 'none';
+        }
+
+        function openSubModal(id) {
+            document.getElementById(id).classList.add('active');
+            overlay.style.display = 'block';
+        }
+
+        function closeSubModal(id) {
+            document.getElementById(id).classList.remove('active');
+            if (sheet.style.bottom !== '0px') {
+                overlay.style.display = 'none';
+            }
+        }
+
+        function startAudioCall(event) {
+            event.stopPropagation();
+            const area = document.getElementById('messagesArea');
+            area.innerHTML += `<div class="system-info-msg">📞 Starting Audio Call...</div>`;
+            scrollToBottom();
+        }
+
+        function startVideoCall(event) {
+            event.stopPropagation();
+            const area = document.getElementById('messagesArea');
+            area.innerHTML += `<div class="system-info-msg">📹 Starting Video Call...</div>`;
+            scrollToBottom();
+        }
+
+        function changeProfilePicture(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgUrl = e.target.result;
+                    document.getElementById('headerAvatar').style.backgroundImage = `url('${imgUrl}')`;
+                    document.getElementById('sheetAvatar').style.backgroundImage = `url('${imgUrl}')`;
+                    document.getElementById('headerAvatar').innerText = '';
+                    document.getElementById('sheetAvatar').innerText = '';
+                    localStorage.setItem('chatProfilePic', imgUrl);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveProfile() {
+            const bio = document.getElementById('userBioInput').value.trim();
+            if (bio) {
+                localStorage.setItem('chatUserBio', bio);
+                const area = document.getElementById('messagesArea');
+                area.innerHTML += `<div class="system-info-msg">Bio updated: "${bio}"</div>`;
+            }
+            closeAllModals();
+        }
+
+        function saveOptions() {
+            const size = document.getElementById('fontSizeSelect').value;
+            document.documentElement.style.setProperty('--base-font-size', size);
+            localStorage.setItem('chatFontSize', size);
+            closeAllModals();
+        }
+
+        function openWallpaperModal() { openSubModal('wallpaperModal'); }
+
+        function changeBackground(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const bgUrl = e.target.result;
+                    document.getElementById('chatBox').style.backgroundImage = `url('${bgUrl}')`;
+                    localStorage.setItem('chatBgImage', bgUrl);
+                    document.getElementById('wallpaperSubtext').innerText = 'Custom wallpaper active';
+                };
+                reader.readAsDataURL(file);
+            }
+            closeAllModals();
+        }
+
+        function removeWallpaper() {
+            document.getElementById('chatBox').style.backgroundImage = 'none';
+            localStorage.removeItem('chatBgImage');
+            document.getElementById('wallpaperSubtext').innerText = 'Set or remove background picture';
+            closeAllModals();
+        }
+
+        function saveNickname() {
+            const newName = document.getElementById('nicknameInput').value.trim();
+            if (newName !== '') {
+                document.getElementById('userName').innerText = newName;
+                document.getElementById('sheetUserName').innerText = newName;
+                const initial = newName.substring(0, 2).toUpperCase();
+                if (!localStorage.getItem('chatProfilePic')) {
+                    document.getElementById('headerAvatar').innerText = initial;
+                    document.getElementById('sheetAvatar').innerText = initial;
+                }
+                localStorage.setItem('chatNickname', newName);
+            }
+            closeAllModals();
+        }
+
+        function createGroup() {
+            const groupName = document.getElementById('groupNameInput').value.trim();
+            if (groupName !== '') {
+                document.getElementById('userName').innerText = groupName;
+                document.getElementById('sheetUserName').innerText = groupName;
+                document.getElementById('headerAvatar').style.backgroundImage = 'none';
+                document.getElementById('sheetAvatar').style.backgroundImage = 'none';
+                document.getElementById('headerAvatar').innerText = '👥';
+                document.getElementById('sheetAvatar').innerText = '👥';
+                
+                const area = document.getElementById('messagesArea');
+                area.innerHTML += `<div class="system-info-msg">Group "${groupName}" created successfully!</div>`;
+            }
+            closeAllModals();
+        }
+
+        function setDisappearingTimer(time) {
+            document.getElementById('disappearingSubtext').innerText = time;
+            const area = document.getElementById('messagesArea');
+            if (time !== 'Off') {
+                area.innerHTML += `<div class="system-info-msg">Disappearing messages set to ${time}</div>`;
+            } else {
+                area.innerHTML += `<div class="system-info-msg">Disappearing messages turned off</div>`;
+            }
+            closeAllModals();
+        }
+
+        function toggleSearchBar() {
+            closeAllModals();
+            const searchBox = document.getElementById('searchContainer');
+            searchBox.style.display = searchBox.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function filterMessages() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const msgs = document.querySelectorAll('.msg-bubble');
+            msgs.forEach(msg => {
+                msg.style.display = msg.innerText.toLowerCase().includes(query) ? 'block' : 'none';
+            });
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('muteIcon').innerText = isMuted ? '🔕' : '🔔';
+            document.getElementById('muteLabel').innerText = isMuted ? 'Muted' : 'Mute';
+            document.getElementById('statusText').innerText = isMuted ? 'Muted' : 'Online';
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                document.body.removeAttribute('data-theme');
+                localStorage.setItem('chatTheme', 'light');
+            } else {
+                document.body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('chatTheme', 'dark');
+            }
+            closeAllModals();
+        }
+
+        window.onload = function() {
+            const savedTheme = localStorage.getItem('chatTheme');
+            if (savedTheme === 'dark') document.body.setAttribute('data-theme', 'dark');
+
+            const savedBg = localStorage.getItem('chatBgImage');
+            if (savedBg) {
+                document.getElementById('chatBox').style.backgroundImage = `url('${savedBg}')`;
+                document.getElementById('wallpaperSubtext').innerText = 'Custom wallpaper active';
             }
 
-            chatBox.appendChild(msgDiv);
-        });
-        chatBox.scrollTop = chatBox.scrollHeight;
-    });
-}
+            const savedName = localStorage.getItem('chatNickname');
+            if (savedName) {
+                document.getElementById('userName').innerText = savedName;
+                document.getElementById('sheetUserName').innerText = savedName;
+            }
 
-messageForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const text = messageInput.value.trim();
-    if (!roomId) return;
+            const savedPic = localStorage.getItem('chatProfilePic');
+            if (savedPic) {
+                document.getElementById('headerAvatar').style.backgroundImage = `url('${savedPic}')`;
+                document.getElementById('sheetAvatar').style.backgroundImage = `url('${savedPic}')`;
+                document.getElementById('headerAvatar').innerText = '';
+                document.getElementById('sheetAvatar').innerText = '';
+            }
 
-    if (text.length > 0) {
-        messageInput.value = "";
-        actionBtn.innerText = "🎤";
-        actionBtn.classList.remove("is-typing");
-        await addDoc(collection(db, "chatRooms", roomId, "messages"), {
-            text: text,
-            senderId: currentUser.uid,
-            timestamp: serverTimestamp()
-        });
-    }
-});
+            const savedSize = localStorage.getItem('chatFontSize');
+            if (savedSize) {
+                document.documentElement.style.setProperty('--base-font-size', savedSize);
+                document.getElementById('fontSizeSelect').value = savedSize;
+            }
 
-// Call System
-document.getElementById("audioCallBtn").onclick = () => startCall(false);
-document.getElementById("videoCallBtn").onclick = () => startCall(true);
+            scrollToBottom();
+        };
 
-async function startCall(isVideo) {
-    if (!roomId) return;
-    try {
-        localStream = await navigator.mediaDevices.getUserMedia({ video: isVideo, audio: true });
-    } catch (err) {
-        alert("Microphone/Camera permissions required.");
-        return;
-    }
-
-    callModal.style.display = "flex";
-    callStatusLabel.innerText = "Calling...";
-
-    peerConnection = new RTCPeerConnection(rtcConfig);
-    localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-
-    const callDocRef = doc(db, "chatRooms", roomId, "calls", "currentCall");
-    const offer = await peerConnection.createOffer();
-    await peerConnection.setLocalDescription(offer);
-
-    await setDoc(callDocRef, {
-        offer: { type: offer.type, sdp: offer.sdp },
-        callerId: currentUser.uid,
-        type: isVideo ? "video" : "audio",
-        status: "calling"
-    });
-}
-
-function listenForIncomingCalls() {
-    if (!roomId) return;
-    const callDocRef = doc(db, "chatRooms", roomId, "calls", "currentCall");
-
-    onSnapshot(callDocRef, async (snapshot) => {
-        if (!snapshot.exists()) return;
-        const data = snapshot.data();
-
-        if (data.callerId !== currentUser.uid && data.status === "calling") {
-            callModal.style.display = "flex";
-            callStatusLabel.innerText = `Incoming Call...`;
-            acceptCallBtn.style.display = "flex";
-
-            acceptCallBtn.onclick = async () => {
-                acceptCallBtn.style.display = "none";
-                localStream = await navigator.mediaDevices.getUserMedia({ video: data.type === "video", audio: true });
-
-                peerConnection = new RTCPeerConnection(rtcConfig);
-                localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-
-                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
-                const answer = await peerConnection.createAnswer();
-                await peerConnection.setLocalDescription(answer);
-
-                await updateDoc(callDocRef, {
-                    answer: { type: answer.type, sdp: answer.sdp },
-                    status: "connected"
-                });
-            };
-        } else if (data.status === "ended") {
-            callModal.style.display = "none";
+        function sendMessage() {
+            const input = document.getElementById('msgInput');
+            const text = input.value.trim();
+            if (text !== '') {
+                const area = document.getElementById('messagesArea');
+                area.innerHTML += `<div class="msg-bubble msg-sent">${text}</div>`;
+                input.value = '';
+                toggleActionBtn();
+                scrollToBottom();
+            }
         }
-    });
-}
 
-endCallBtn.onclick = async () => {
-    if (roomId) {
-        const callDocRef = doc(db, "chatRooms", roomId, "calls", "currentCall");
-        await setDoc(callDocRef, { status: "ended" }, { merge: true }).catch(() => {});
-    }
-    callModal.style.display = "none";
-};
-</script>
-
+        function handleKey(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+    </script>
 </body>
 </html>

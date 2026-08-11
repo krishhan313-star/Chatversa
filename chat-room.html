@@ -15,15 +15,15 @@
         }
 
         :root {
-            --bg-color: #eef3f9;
-            --text-color: #2c3e50;
-            --subtext-color: #7f8c8d;
-            --card-bg: rgba(255, 255, 255, 0.45);
-            --header-bg: rgba(255, 255, 255, 0.65);
-            --input-bg: rgba(255, 255, 255, 0.7);
-            --border-color: rgba(255, 255, 255, 0.85);
-            --msg-sent: rgba(200, 138, 88, 0.25);
-            --msg-received: rgba(255, 255, 255, 0.75);
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+            --subtext-color: #64748b;
+            --card-bg: #f1f5f9;
+            --header-bg: #ffffff;
+            --input-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --msg-sent: #e2e8f0;
+            --msg-received: #ffffff;
             --sheet-bg: #ffffff;
             --sheet-text: #1e293b;
             --sheet-subtext: #64748b;
@@ -37,12 +37,12 @@
             --bg-color: #0f172a;
             --text-color: #f8fafc;
             --subtext-color: #94a3b8;
-            --card-bg: rgba(30, 41, 59, 0.55);
-            --header-bg: rgba(30, 41, 59, 0.75);
-            --input-bg: rgba(30, 41, 59, 0.8);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --msg-sent: rgba(200, 138, 88, 0.45);
-            --msg-received: rgba(51, 65, 85, 0.85);
+            --card-bg: #1e293b;
+            --header-bg: #0f172a;
+            --input-bg: #1e293b;
+            --border-color: #334155;
+            --msg-sent: #334155;
+            --msg-received: #1e293b;
             --sheet-bg: #1e293b;
             --sheet-text: #f8fafc;
             --sheet-subtext: #94a3b8;
@@ -68,40 +68,24 @@
             transition: background 0.3s ease;
         }
 
-        .aura-glow {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.6;
-            pointer-events: none;
-        }
-        .aura-glow.top-left { background: radial-gradient(circle, #f7d9da 0%, rgba(247, 217, 218, 0) 70%); top: -150px; left: -150px; }
-        .aura-glow.bottom-right { background: radial-gradient(circle, #dce6f5 0%, rgba(220, 230, 245, 0) 70%); bottom: -150px; right: -150px; }
-
         .chat-container {
             position: relative;
             width: 100%;
             max-width: 440px;
             height: 100%;
             max-height: 100dvh;
-            background: var(--card-bg);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid var(--border-color);
+            background: var(--bg-color);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            background-size: cover;
-            background-position: center;
         }
 
         @media (min-height: 600px) and (min-width: 480px) {
             .chat-container {
                 height: 90vh;
                 border-radius: 28px;
-                box-shadow: 0 30px 60px rgba(0, 0, 0, 0.05);
+                box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+                border: 1px solid var(--border-color);
             }
         }
 
@@ -112,8 +96,6 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            backdrop-filter: blur(10px);
-            cursor: pointer;
             z-index: 10;
             flex-shrink: 0;
         }
@@ -136,13 +118,7 @@
             color: var(--text-color);
             background: transparent;
             border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s;
         }
-
-        .call-btn-icon:hover { transform: scale(1.15); }
 
         .back-icon {
             font-size: 20px;
@@ -151,54 +127,28 @@
         }
 
         .avatar {
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: radial-gradient(circle at 35% 30%, #ffffff 0%, #f5ebe6 60%, #c88a58 100%);
-            border: 1.5px solid rgba(255, 255, 255, 0.9);
+            background: #cbd5e1;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            color: #2c3e50;
+            color: #334155;
             background-size: cover;
             background-position: center;
         }
 
         .user-details h3 {
-            font-size: 15px;
+            font-size: 16px;
             color: var(--text-color);
-            font-weight: 600;
-        }
-
-        .status {
-            font-size: 12px;
-            color: #10b981;
-            font-weight: 500;
-        }
-
-        .search-bar-container {
-            display: none;
-            padding: 8px 16px;
-            background: var(--header-bg);
-            border-bottom: 1px solid var(--border-color);
-            flex-shrink: 0;
-        }
-
-        .search-bar-input {
-            width: 100%;
-            padding: 8px 14px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            background: var(--input-bg);
-            color: var(--text-color);
-            outline: none;
-            font-size: 13px;
+            font-weight: 700;
         }
 
         .messages-area {
             flex: 1;
-            padding: 18px;
+            padding: 16px;
             overflow-y: auto;
             overscroll-behavior-y: contain;
             display: flex;
@@ -207,8 +157,18 @@
             scroll-behavior: smooth;
         }
 
+        .date-divider {
+            align-self: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 8px 0;
+        }
+
         .msg-bubble {
-            max-width: 75%;
+            max-width: 80%;
             padding: 10px 16px;
             border-radius: 18px;
             font-size: var(--base-font-size);
@@ -220,58 +180,81 @@
         .msg-sent {
             align-self: flex-end;
             background: var(--msg-sent);
-            border: 1px solid rgba(200, 138, 88, 0.3);
-            border-bottom-right-radius: 4px;
         }
 
         .msg-received {
             align-self: flex-start;
             background: var(--msg-received);
             border: 1px solid var(--border-color);
-            border-bottom-left-radius: 4px;
         }
 
-        .system-info-msg {
-            align-self: center;
-            background: rgba(0, 0, 0, 0.1);
-            color: var(--subtext-color);
-            font-size: 11px;
-            padding: 4px 12px;
-            border-radius: 10px;
+        /* SNAPCHAT CARD STYLING */
+        .snap-card-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
             margin: 4px 0;
         }
 
-        .snap-msg-img {
-            max-width: 180px;
+        .snap-card-wrapper.sent { align-items: flex-end; }
+        .snap-card-wrapper.received { align-items: flex-start; }
+
+        .snap-card {
+            width: 90%;
+            max-width: 320px;
+            background: #ffffff;
             border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
             cursor: pointer;
-            border: 2px solid rgba(255,255,255,0.8);
-            margin-top: 4px;
-            display: block;
+            user-select: none;
         }
 
-        audio {
-            margin-top: 4px;
-            width: 200px;
-            height: 36px;
+        .snap-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
         }
 
-        /* SNAPCHAT CHAT BAR */
+        .snap-card.sent::before { background: #fffc00; background-color: #e11d48; }
+        .snap-card.received::before { background: #0284c7; }
+
+        .snap-card-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .snap-card-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        /* SNAPCHAT CHAT INPUT BAR */
         .snap-chat-bar-container {
             position: relative;
             width: 100%;
             flex-shrink: 0;
+            background: #ffffff;
         }
 
         .snap-chat-bar {
             padding: 10px 12px;
-            background: #ffffff;
             display: flex;
             align-items: center;
             gap: 8px;
-            border-top: 1px solid rgba(0, 0, 0, 0.08);
-            width: 100%;
-            box-sizing: border-box;
+            border-top: 1px solid #f1f5f9;
         }
 
         .snap-cam-btn {
@@ -293,11 +276,10 @@
             flex: 1;
             display: flex;
             align-items: center;
-            border: 1.5px solid #8e95a2;
+            border: 1.5px solid #d1d5db;
             border-radius: 26px;
             padding: 0 14px;
             height: 40px;
-            box-sizing: border-box;
             background: #ffffff;
         }
 
@@ -311,81 +293,21 @@
             font-family: inherit;
         }
 
-        .snap-action-btn {
+        .snap-action-btn, .snap-icon-btn {
             background: transparent;
             border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #292d32;
-            padding: 2px;
-            flex-shrink: 0;
-            transition: color 0.2s, transform 0.2s;
-        }
-
-        .snap-action-btn.recording {
-            color: #ef4444 !important;
-            animation: pulse 1s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-
-        .snap-action-btn svg { width: 22px; height: 22px; fill: currentColor; }
-
-        .snap-icon-btn {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #292d32;
+            color: #1e293b;
             padding: 2px;
             flex-shrink: 0;
         }
 
-        .snap-icon-btn svg { width: 24px; height: 24px; fill: currentColor; }
+        .snap-icon-btn svg, .snap-action-btn svg { width: 24px; height: 24px; fill: currentColor; }
 
-        /* EMOJI PICKER MODAL */
-        .emoji-picker-container {
-            display: none;
-            position: absolute;
-            bottom: 60px;
-            right: 10px;
-            background: #ffffff;
-            border: 1px solid rgba(0,0,0,0.15);
-            border-radius: 16px;
-            padding: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            width: 250px;
-            max-height: 180px;
-            overflow-y: auto;
-            z-index: 90;
-        }
-
-        .emoji-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 8px;
-            font-size: 20px;
-            text-align: center;
-        }
-
-        .emoji-item {
-            cursor: pointer;
-            border-radius: 6px;
-            padding: 4px;
-            user-select: none;
-        }
-
-        .emoji-item:hover { background: #f1f5f9; }
-
-        /* SNAP OVERLAYS & CAMERA SCREEN */
+        /* FULLSCREEN CAMERA & VIEWER */
         .snap-full-screen {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100dvh;
@@ -442,182 +364,65 @@
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
-        .snap-send-btn { background: #0084ff; color: white; }
+        .snap-send-btn { background: #e11d48; color: white; }
 
-        /* MODALS & SHEETS */
-        .overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            z-index: 100;
-            backdrop-filter: blur(4px);
-        }
-
-        .settings-sheet {
-            position: absolute;
-            bottom: -100%;
-            left: 0; right: 0;
-            max-height: 85vh;
-            background: var(--sheet-bg);
-            border-top-left-radius: 24px;
-            border-top-right-radius: 24px;
-            padding: 20px 16px;
-            transition: bottom 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
-            z-index: 101;
-            color: var(--sheet-text);
-            overflow-y: auto;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
-        }
-
-        .sheet-handle {
-            width: 36px;
-            height: 4px;
-            background: var(--sheet-subtext);
-            opacity: 0.3;
-            border-radius: 2px;
-            margin: 0 auto 16px auto;
-        }
-
-        .profile-section { text-align: center; margin-bottom: 20px; }
-
-        .profile-img {
-            width: 80px; height: 80px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 35% 30%, #ffffff 0%, #f5ebe6 60%, #c88a58 100%);
-            margin: 0 auto 8px auto;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 28px; font-weight: 700; color: #2c3e50;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            background-size: cover; background-position: center;
-        }
-
-        .profile-name { font-size: 16px; font-weight: 700; color: var(--sheet-text); }
-
-        .quick-actions-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; padding: 0 5px;
-        }
-
-        .action-item { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
-
-        .action-circle {
-            width: 50px; height: 50px; border-radius: 50%; background: var(--icon-bg);
-            display: flex; align-items: center; justify-content: center; font-size: 20px;
-            transition: transform 0.2s;
-        }
-
-        .action-circle:hover { transform: scale(1.05); }
-
-        .action-label { font-size: 12px; color: var(--sheet-subtext); font-weight: 500; }
-
-        .options-list { display: flex; flex-direction: column; gap: 4px; }
-
-        .setting-row {
-            display: flex; align-items: center; justify-content: space-between; padding: 12px 10px;
-            border-radius: 12px; cursor: pointer; transition: background 0.2s;
-        }
-
-        .setting-row:hover { background: var(--hover-bg); }
-
-        .setting-left { display: flex; align-items: center; gap: 14px; }
-
-        .setting-icon { font-size: 20px; width: 28px; display: flex; justify-content: center; }
-
-        .setting-info h4 { font-size: 14px; font-weight: 600; color: var(--sheet-text); }
-
-        .setting-info p { font-size: 12px; color: var(--sheet-subtext); margin-top: 2px; }
-
-        .sub-modal {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            width: 85%; background: var(--modal-bg); border-radius: 20px; padding: 20px;
-            display: none; flex-direction: column; gap: 15px; z-index: 105;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid var(--border-color);
-            transition: transform 0.2s ease;
-        }
-
-        .sub-modal.active { display: flex; transform: translate(-50%, -50%) scale(1); }
-
-        .modal-title { font-size: 16px; font-weight: 700; color: var(--sheet-text); text-align: center; }
-
-        .modal-input {
-            width: 100%; padding: 10px 14px; border-radius: 10px;
-            border: 1px solid var(--border-color); background: var(--hover-bg);
-            color: var(--sheet-text); outline: none; font-size: 14px;
-        }
-
-        .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; }
-
-        .modal-btn { padding: 8px 16px; border-radius: 10px; border: none; font-weight: 600; font-size: 13px; cursor: pointer; }
-
-        .btn-cancel { background: var(--hover-bg); color: var(--sheet-subtext); }
-
-        .btn-confirm { background: #c88a58; color: white; }
-
-        .btn-danger { background: #ef4444; color: white; }
-
-        .toggle-row { display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: var(--sheet-text); }
-
-        #bgInput, #profilePicInput, #chatGalleryInput { display: none; }
+        #chatGalleryInput { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="aura-glow top-left"></div>
-    <div class="aura-glow bottom-right"></div>
-
-    <div class="chat-container" id="chatBox">
+    <div class="chat-container">
         
         <div class="chat-header">
-            <div class="header-left" onclick="openDrawer()">
-                <a href="chats.html" class="back-icon" onclick="event.stopPropagation();">⬅</a>
-                <div class="avatar" id="headerAvatar">KR</div>
+            <div class="header-left">
+                <a href="#" class="back-icon">❮</a>
+                <div class="avatar" id="headerAvatar">👤</div>
                 <div class="user-details">
-                    <h3 id="userName">krishhankumar708</h3>
-                    <span class="status" id="statusText">Online</span>
+                    <h3 id="userName">krishan</h3>
                 </div>
             </div>
             
             <div class="header-right-actions">
-                <button class="call-btn-icon" onclick="startAudioCall(event)" title="Audio Call">📞</button>
-                <button class="call-btn-icon" onclick="startVideoCall(event)" title="Video Call">📹</button>
-                <span onclick="openDrawer()" style="color: var(--text-color); font-size: 18px; cursor: pointer;">⋮</span>
+                <button class="call-btn-icon">📞</button>
+                <button class="call-btn-icon">📹</button>
             </div>
-        </div>
-
-        <div class="search-bar-container" id="searchContainer">
-            <input type="text" class="search-bar-input" id="searchInput" placeholder="Search in conversation..." onkeyup="filterMessages()">
         </div>
 
         <div class="messages-area" id="messagesArea">
-            <div class="msg-bubble msg-received">Hey! Kaise ho?</div>
-            <div class="msg-bubble msg-sent">Main badhiya hu!</div>
-        </div>
-
-        <div class="snap-chat-bar-container">
+            <div class="date-divider">YESTERDAY</div>
             
-            <div class="emoji-picker-container" id="emojiPicker">
-                <div class="emoji-grid">
-                    <span class="emoji-item" onclick="addEmoji('😂')">😂</span>
-                    <span class="emoji-item" onclick="addEmoji('❤️')">❤️</span>
-                    <span class="emoji-item" onclick="addEmoji('🔥')">🔥</span>
-                    <span class="emoji-item" onclick="addEmoji('😍')">😍</span>
-                    <span class="emoji-item" onclick="addEmoji('👍')">👍</span>
-                    <span class="emoji-item" onclick="addEmoji('😊')">😊</span>
-                    <span class="emoji-item" onclick="addEmoji('😭')">😭</span>
-                    <span class="emoji-item" onclick="addEmoji('😎')">😎</span>
-                    <span class="emoji-item" onclick="addEmoji('🎉')">🎉</span>
-                    <span class="emoji-item" onclick="addEmoji('✨')">✨</span>
-                    <span class="emoji-item" onclick="addEmoji('🙏')">🙏</span>
-                    <span class="emoji-item" onclick="addEmoji('💀')">💀</span>
+            <!-- SENT SNAP CARD -->
+            <div class="snap-card-wrapper sent">
+                <div class="snap-card sent">
+                    <div class="snap-card-icon">
+                        <!-- Filled Red Arrow -->
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="#e11d48">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                    </div>
+                    <span class="snap-card-text">Delivered</span>
                 </div>
             </div>
 
+            <div class="date-divider">TODAY</div>
+
+            <!-- RECEIVED SNAP CARD -->
+            <div class="snap-card-wrapper received">
+                <div class="snap-card received" onclick="openReceivedSnap(this)">
+                    <div class="snap-card-icon">
+                        <!-- Filled Red Rounded Square -->
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="#e11d48">
+                            <rect x="3" y="3" width="18" height="18" rx="5" ry="5"/>
+                        </svg>
+                    </div>
+                    <span class="snap-card-text">Tap to view</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="snap-chat-bar-container">
             <div class="snap-chat-bar">
                 <button class="snap-cam-btn" onclick="openSnapCamera()">
                     <svg viewBox="0 0 24 24">
@@ -627,203 +432,22 @@
                 </button>
 
                 <div class="snap-pill-wrapper">
-                    <input type="text" id="msgInput" class="snap-pill-input" placeholder="Send chat" oninput="toggleActionBtn()" onkeypress="handleKey(event)" onfocus="scrollToBottom()">
+                    <input type="text" id="msgInput" class="snap-pill-input" placeholder="Send chat" onkeypress="handleKey(event)">
                 </div>
-
-                <button class="snap-icon-btn" onclick="toggleEmojiPicker()">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
-                    </svg>
-                </button>
 
                 <button class="snap-icon-btn" onclick="document.getElementById('chatGalleryInput').click()">
                     <svg viewBox="0 0 24 24">
                         <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12zm-2.5-7l-2.5 3.01L13.5 9l-3 4h10z"/>
                     </svg>
                 </button>
-
-                <button class="snap-action-btn" id="actionBtn" onclick="handleActionClick()">
-                    <svg id="actionIcon" viewBox="0 0 24 24">
-                        <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
-                        <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
-                    </svg>
-                </button>
             </div>
         </div>
 
-        <div class="overlay" id="overlay" onclick="closeAllModals()"></div>
-
-        <div class="settings-sheet" id="settingsSheet">
-            <div class="sheet-handle"></div>
-            
-            <div class="profile-section">
-                <div class="profile-img" id="sheetAvatar">KR</div>
-                <div class="profile-name" id="sheetUserName">krishhankumar708</div>
-            </div>
-
-            <div class="quick-actions-grid">
-                <div class="action-item" onclick="openSubModal('profileModal')">
-                    <div class="action-circle">👤</div>
-                    <span class="action-label">Profile</span>
-                </div>
-                <div class="action-item" onclick="toggleSearchBar()">
-                    <div class="action-circle">🔍</div>
-                    <span class="action-label">Search</span>
-                </div>
-                <div class="action-item" onclick="toggleMute()">
-                    <div class="action-circle" id="muteIcon">🔔</div>
-                    <span class="action-label" id="muteLabel">Mute</span>
-                </div>
-                <div class="action-item" onclick="openSubModal('optionsModal')">
-                    <div class="action-circle">⚙️</div>
-                    <span class="action-label">Options</span>
-                </div>
-            </div>
-
-            <div class="options-list">
-                <div class="setting-row" onclick="toggleTheme()">
-                    <div class="setting-left">
-                        <span class="setting-icon">🎨</span>
-                        <div class="setting-info">
-                            <h4>Customize</h4>
-                            <p>Theme and font</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="setting-row" onclick="openWallpaperModal()">
-                    <div class="setting-left">
-                        <span class="setting-icon">🖼️</span>
-                        <div class="setting-info">
-                            <h4>Wallpaper</h4>
-                            <p id="wallpaperSubtext">Set or remove background picture</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="setting-row" onclick="openSubModal('disappearingModal')">
-                    <div class="setting-left">
-                        <span class="setting-icon">⏱️</span>
-                        <div class="setting-info">
-                            <h4>Disappearing messages</h4>
-                            <p id="disappearingSubtext">Off</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="setting-row" onclick="openSubModal('privacyModal')">
-                    <div class="setting-left">
-                        <span class="setting-icon">🔒</span>
-                        <div class="setting-info">
-                            <h4>Privacy & safety</h4>
-                            <p>Security settings</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="setting-row" onclick="openSubModal('nicknameModal')">
-                    <div class="setting-left">
-                        <span class="setting-icon">🏷️</span>
-                        <div class="setting-info">
-                            <h4>Nicknames</h4>
-                            <p>Change name display</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="setting-row" onclick="openSubModal('groupModal')">
-                    <div class="setting-left">
-                        <span class="setting-icon">👥</span>
-                        <div class="setting-info">
-                            <h4>Create a group chat</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <input type="file" id="bgInput" accept="image/*" onchange="changeBackground(event)">
-            <input type="file" id="profilePicInput" accept="image/*" onchange="changeProfilePicture(event)">
-        </div>
-
-        <input type="file" id="chatGalleryInput" accept="image/*" onchange="sendGalleryImage(event)">
-
-        <div class="sub-modal" id="profileModal">
-            <div class="modal-title">User Profile</div>
-            <button class="modal-btn btn-confirm" onclick="document.getElementById('profilePicInput').click()">🖼️ Update Profile Picture</button>
-            <input type="text" id="userBioInput" class="modal-input" placeholder="Update your Bio...">
-            <div class="modal-buttons">
-                <button class="modal-btn btn-cancel" onclick="closeSubModal('profileModal')">Cancel</button>
-                <button class="modal-btn btn-confirm" onclick="saveProfile()">Save Profile</button>
-            </div>
-        </div>
-
-        <div class="sub-modal" id="optionsModal">
-            <div class="modal-title">App Options</div>
-            <div class="toggle-row"><span>Notifications</span><input type="checkbox" id="notifToggle" checked></div>
-            <div class="toggle-row"><span>Read Receipts</span><input type="checkbox" id="readToggle" checked></div>
-            <div class="toggle-row">
-                <span>Font Size</span>
-                <select id="fontSizeSelect" class="modal-input" style="width:120px;">
-                    <option value="12px">Small</option>
-                    <option value="14px" selected>Medium</option>
-                    <option value="16px">Large</option>
-                </select>
-            </div>
-            <div class="modal-buttons">
-                <button class="modal-btn btn-cancel" onclick="closeSubModal('optionsModal')">Cancel</button>
-                <button class="modal-btn btn-confirm" onclick="saveOptions()">Save</button>
-            </div>
-        </div>
-
-        <div class="sub-modal" id="privacyModal">
-            <div class="modal-title">Privacy & Safety</div>
-            <div class="toggle-row"><span>Last Seen Status</span><input type="checkbox" checked></div>
-            <div class="toggle-row"><span>End-to-End Encryption</span><span style="color:#10b981; font-weight:bold;">Active</span></div>
-            <button class="modal-btn btn-danger" onclick="alert('No blocked contacts.')">Manage Blocked Contacts</button>
-            <div class="modal-buttons">
-                <button class="modal-btn btn-cancel" onclick="closeSubModal('privacyModal')">Close</button>
-            </div>
-        </div>
-
-        <div class="sub-modal" id="wallpaperModal">
-            <div class="modal-title">Wallpaper Options</div>
-            <button class="modal-btn btn-confirm" onclick="document.getElementById('bgInput').click()">📷 Select New Wallpaper</button>
-            <button class="modal-btn btn-danger" onclick="removeWallpaper()">🗑️ Remove Wallpaper</button>
-            <div class="modal-buttons">
-                <button class="modal-btn btn-cancel" onclick="closeSubModal('wallpaperModal')">Cancel</button>
-            </div>
-        </div>
-
-        <div class="sub-modal" id="nicknameModal">
-            <div class="modal-title">Set Nickname</div>
-            <input type="text" id="nicknameInput" class="modal-input" placeholder="Enter new nickname...">
-            <div class="modal-buttons">
-                <button class="modal-btn btn-cancel" onclick="closeSubModal('nicknameModal')">Cancel</button>
-                <button class="modal-btn btn-confirm" onclick="saveNickname()">Save</button>
-            </div>
-        </div>
-
-        <div class="sub-modal" id="groupModal">
-            <div class="modal-title">Create Group Chat</div>
-            <input type="text" id="groupNameInput" class="modal-input" placeholder="Enter Group Name...">
-            <div class="modal-buttons">
-                <button class="modal-btn btn-cancel" onclick="closeSubModal('groupModal')">Cancel</button>
-                <button class="modal-btn btn-confirm" onclick="createGroup()">Create</button>
-            </div>
-        </div>
-
-        <div class="sub-modal" id="disappearingModal">
-            <div class="modal-title">Disappearing Messages</div>
-            <button class="modal-btn btn-cancel" onclick="setDisappearingTimer('Off')">Off</button>
-            <button class="modal-btn btn-confirm" onclick="setDisappearingTimer('24 Hours')">24 Hours</button>
-            <button class="modal-btn btn-confirm" onclick="setDisappearingTimer('7 Days')">7 Days</button>
-            <div class="modal-buttons">
-                <button class="modal-btn btn-cancel" onclick="closeSubModal('disappearingModal')">Cancel</button>
-            </div>
-        </div>
+        <input type="file" id="chatGalleryInput" accept="image/*" onchange="sendGallerySnap(event)">
 
     </div>
 
+    <!-- CAMERA SCREEN -->
     <div id="snapCamScreen" class="snap-full-screen">
         <video id="snapVideo" class="snap-video-preview" autoplay playsinline></video>
         <div class="snap-camera-controls">
@@ -833,135 +457,28 @@
         </div>
     </div>
 
+    <!-- REVIEW SCREEN -->
     <div id="snapReviewScreen" class="snap-full-screen">
         <img id="snapPreviewImg" class="snap-video-preview">
         <div class="snap-review-actions">
-            <button class="snap-review-btn" onclick="saveSnapToDevice()">💾 Save</button>
             <button class="snap-review-btn" onclick="discardSnap()">🗑️ Retake</button>
             <button class="snap-review-btn snap-send-btn" onclick="sendSnapToChat()">🚀 Send Snap</button>
         </div>
     </div>
 
+    <!-- SNAP VIEWER SCREEN -->
     <div id="snapViewerScreen" class="snap-full-screen" onclick="closeSnapViewer()">
         <img id="snapFullImg" class="snap-video-preview">
     </div>
 
     <script>
-        const sheet = document.getElementById('settingsSheet');
-        const overlay = document.getElementById('overlay');
-        let isMuted = false;
-
-        const micSVG = `<path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>`;
-        const sendSVG = `<path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>`;
-
-        function scrollToBottom() {
-            setTimeout(() => {
-                const area = document.getElementById('messagesArea');
-                area.scrollTop = area.scrollHeight;
-            }, 100);
-        }
-
-        function toggleActionBtn() {
-            const input = document.getElementById('msgInput');
-            const btn = document.getElementById('actionBtn');
-            const icon = document.getElementById('actionIcon');
-
-            if (input.value.trim().length > 0) {
-                icon.innerHTML = sendSVG;
-                btn.style.color = "#0084ff";
-            } else {
-                icon.innerHTML = micSVG;
-                btn.style.color = "#292d32";
-            }
-        }
-
-        function toggleEmojiPicker() {
-            const picker = document.getElementById('emojiPicker');
-            picker.style.display = (picker.style.display === 'block') ? 'none' : 'block';
-        }
-
-        function addEmoji(emoji) {
-            const input = document.getElementById('msgInput');
-            input.value += emoji;
-            toggleActionBtn();
-            document.getElementById('emojiPicker').style.display = 'none';
-            input.focus();
-        }
-
-        function sendGalleryImage(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imgUrl = e.target.result;
-                    const area = document.getElementById('messagesArea');
-                    area.innerHTML += `
-                        <div class="msg-bubble msg-sent">
-                            <img src="${imgUrl}" class="snap-msg-img" onclick="viewFullSnap('${imgUrl}')">
-                        </div>
-                    `;
-                    scrollToBottom();
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        let mediaRecorder = null;
-        let audioChunks = [];
-        let isRecording = false;
-
-        async function handleActionClick() {
-            const input = document.getElementById('msgInput');
-            if (input.value.trim().length > 0) {
-                sendMessage();
-            } else {
-                if (!isRecording) {
-                    startVoiceRecording();
-                } else {
-                    stopVoiceRecording();
-                }
-            }
-        }
-
-        async function startVoiceRecording() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                audioChunks = [];
-
-                mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
-                mediaRecorder.onstop = () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
-                    const audioUrl = URL.createObjectURL(audioBlob);
-                    const area = document.getElementById('messagesArea');
-                    area.innerHTML += `
-                        <div class="msg-bubble msg-sent">
-                            🎙️ <b>Voice Note</b><br>
-                            <audio controls src="${audioUrl}"></audio>
-                        </div>
-                    `;
-                    scrollToBottom();
-                };
-
-                mediaRecorder.start();
-                isRecording = true;
-                document.getElementById('actionBtn').classList.add('recording');
-            } catch (err) {
-                alert('Microphone access denied or not available!');
-            }
-        }
-
-        function stopVoiceRecording() {
-            if (mediaRecorder && isRecording) {
-                mediaRecorder.stop();
-                mediaRecorder.stream.getTracks().forEach(track => track.stop());
-                isRecording = false;
-                document.getElementById('actionBtn').classList.remove('recording');
-            }
-        }
-
         let currentSnapData = null;
         const videoElem = document.getElementById('snapVideo');
+
+        function scrollToBottom() {
+            const area = document.getElementById('messagesArea');
+            area.scrollTop = area.scrollHeight;
+        }
 
         async function openSnapCamera() {
             document.getElementById('snapCamScreen').style.display = 'flex';
@@ -969,7 +486,7 @@
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
                 videoElem.srcObject = stream;
             } catch (err) {
-                alert('Unable to access camera: ' + err.message);
+                alert('Unable to access camera');
                 closeSnapCamera();
             }
         }
@@ -995,14 +512,6 @@
             document.getElementById('snapReviewScreen').style.display = 'flex';
         }
 
-        function saveSnapToDevice() {
-            if (!currentSnapData) return;
-            const link = document.createElement('a');
-            link.href = currentSnapData;
-            link.download = 'snap_' + Date.now() + '.png';
-            link.click();
-        }
-
         function discardSnap() {
             currentSnapData = null;
             document.getElementById('snapReviewScreen').style.display = 'none';
@@ -1011,19 +520,52 @@
 
         function sendSnapToChat() {
             if (!currentSnapData) return;
-            const area = document.getElementById('messagesArea');
-            area.innerHTML += `
-                <div class="msg-bubble msg-sent">
-                    📸 <b>Snap</b>
-                    <img src="${currentSnapData}" class="snap-msg-img" onclick="viewFullSnap('${currentSnapData}')">
-                </div>
-            `;
+            appendSentSnapCard(currentSnapData);
             document.getElementById('snapReviewScreen').style.display = 'none';
             currentSnapData = null;
             scrollToBottom();
         }
 
-        function viewFullSnap(url) {
+        function sendGallerySnap(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    appendSentSnapCard(event.target.result);
+                    scrollToBottom();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function appendSentSnapCard(imgData) {
+            const area = document.getElementById('messagesArea');
+            area.innerHTML += `
+                <div class="snap-card-wrapper sent">
+                    <div class="snap-card sent" onclick="viewSnap('${imgData}')">
+                        <div class="snap-card-icon">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="#e11d48">
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                            </svg>
+                        </div>
+                        <span class="snap-card-text">Delivered</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openReceivedSnap(cardElem) {
+            // Demo image overlay or view image
+            viewSnap('https://via.placeholder.com/600x1000/e11d48/ffffff?text=New+Snap');
+            cardElem.querySelector('.snap-card-text').innerText = 'Opened';
+            cardElem.querySelector('.snap-card-icon').innerHTML = `
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#e11d48" stroke-width="2.5">
+                    <rect x="3" y="3" width="18" height="18" rx="5" ry="5"/>
+                </svg>
+            `;
+        }
+
+        function viewSnap(url) {
             document.getElementById('snapFullImg').src = url;
             document.getElementById('snapViewerScreen').style.display = 'flex';
         }
@@ -1032,213 +574,6 @@
             document.getElementById('snapViewerScreen').style.display = 'none';
         }
 
-        function openDrawer() {
-            sheet.style.bottom = '0';
-            overlay.style.display = 'block';
-        }
-
-        function closeDrawer() {
-            sheet.style.bottom = '-100%';
-            overlay.style.display = 'none';
-        }
-
-        function closeAllModals() {
-            closeDrawer();
-            document.querySelectorAll('.sub-modal').forEach(modal => modal.classList.remove('active'));
-            document.getElementById('emojiPicker').style.display = 'none';
-        }
-
-        function openSubModal(id) {
-            document.getElementById(id).classList.add('active');
-            overlay.style.display = 'block';
-        }
-
-        function closeSubModal(id) {
-            document.getElementById(id).classList.remove('active');
-            if (sheet.style.bottom !== '0px') {
-                overlay.style.display = 'none';
-            }
-        }
-
-        function startAudioCall(event) {
-            event.stopPropagation();
-            const area = document.getElementById('messagesArea');
-            area.innerHTML += `<div class="system-info-msg">📞 Starting Audio Call...</div>`;
-            scrollToBottom();
-        }
-
-        function startVideoCall(event) {
-            event.stopPropagation();
-            const area = document.getElementById('messagesArea');
-            area.innerHTML += `<div class="system-info-msg">📹 Starting Video Call...</div>`;
-            scrollToBottom();
-        }
-
-        function changeProfilePicture(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imgUrl = e.target.result;
-                    document.getElementById('headerAvatar').style.backgroundImage = `url('${imgUrl}')`;
-                    document.getElementById('sheetAvatar').style.backgroundImage = `url('${imgUrl}')`;
-                    document.getElementById('headerAvatar').innerText = '';
-                    document.getElementById('sheetAvatar').innerText = '';
-                    localStorage.setItem('chatProfilePic', imgUrl);
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function saveProfile() {
-            const bio = document.getElementById('userBioInput').value.trim();
-            if (bio) {
-                localStorage.setItem('chatUserBio', bio);
-                const area = document.getElementById('messagesArea');
-                area.innerHTML += `<div class="system-info-msg">Bio updated: "${bio}"</div>`;
-            }
-            closeAllModals();
-        }
-
-        function saveOptions() {
-            const size = document.getElementById('fontSizeSelect').value;
-            document.documentElement.style.setProperty('--base-font-size', size);
-            localStorage.setItem('chatFontSize', size);
-            closeAllModals();
-        }
-
-        function openWallpaperModal() { openSubModal('wallpaperModal'); }
-
-        function changeBackground(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const bgUrl = e.target.result;
-                    document.getElementById('chatBox').style.backgroundImage = `url('${bgUrl}')`;
-                    localStorage.setItem('chatBgImage', bgUrl);
-                    document.getElementById('wallpaperSubtext').innerText = 'Custom wallpaper active';
-                };
-                reader.readAsDataURL(file);
-            }
-            closeAllModals();
-        }
-
-        function removeWallpaper() {
-            document.getElementById('chatBox').style.backgroundImage = 'none';
-            localStorage.removeItem('chatBgImage');
-            document.getElementById('wallpaperSubtext').innerText = 'Set or remove background picture';
-            closeAllModals();
-        }
-
-        function saveNickname() {
-            const newName = document.getElementById('nicknameInput').value.trim();
-            if (newName !== '') {
-                document.getElementById('userName').innerText = newName;
-                document.getElementById('sheetUserName').innerText = newName;
-                const initial = newName.substring(0, 2).toUpperCase();
-                if (!localStorage.getItem('chatProfilePic')) {
-                    document.getElementById('headerAvatar').innerText = initial;
-                    document.getElementById('sheetAvatar').innerText = initial;
-                }
-                localStorage.setItem('chatNickname', newName);
-            }
-            closeAllModals();
-        }
-
-        function createGroup() {
-            const groupName = document.getElementById('groupNameInput').value.trim();
-            if (groupName !== '') {
-                document.getElementById('userName').innerText = groupName;
-                document.getElementById('sheetUserName').innerText = groupName;
-                document.getElementById('headerAvatar').style.backgroundImage = 'none';
-                document.getElementById('sheetAvatar').style.backgroundImage = 'none';
-                document.getElementById('headerAvatar').innerText = '👥';
-                document.getElementById('sheetAvatar').innerText = '👥';
-                
-                const area = document.getElementById('messagesArea');
-                area.innerHTML += `<div class="system-info-msg">Group "${groupName}" created successfully!</div>`;
-            }
-            closeAllModals();
-        }
-
-        function setDisappearingTimer(time) {
-            document.getElementById('disappearingSubtext').innerText = time;
-            const area = document.getElementById('messagesArea');
-            if (time !== 'Off') {
-                area.innerHTML += `<div class="system-info-msg">Disappearing messages set to ${time}</div>`;
-            } else {
-                area.innerHTML += `<div class="system-info-msg">Disappearing messages turned off</div>`;
-            }
-            closeAllModals();
-        }
-
-        function toggleSearchBar() {
-            closeAllModals();
-            const searchBox = document.getElementById('searchContainer');
-            searchBox.style.display = searchBox.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function filterMessages() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const msgs = document.querySelectorAll('.msg-bubble');
-            msgs.forEach(msg => {
-                msg.style.display = msg.innerText.toLowerCase().includes(query) ? 'block' : 'none';
-            });
-        }
-
-        function toggleMute() {
-            isMuted = !isMuted;
-            document.getElementById('muteIcon').innerText = isMuted ? '🔕' : '🔔';
-            document.getElementById('muteLabel').innerText = isMuted ? 'Muted' : 'Mute';
-            document.getElementById('statusText').innerText = isMuted ? 'Muted' : 'Online';
-        }
-
-        function toggleTheme() {
-            const currentTheme = document.body.getAttribute('data-theme');
-            if (currentTheme === 'dark') {
-                document.body.removeAttribute('data-theme');
-                localStorage.setItem('chatTheme', 'light');
-            } else {
-                document.body.setAttribute('data-theme', 'dark');
-                localStorage.setItem('chatTheme', 'dark');
-            }
-            closeAllModals();
-        }
-
-        window.onload = function() {
-            const savedTheme = localStorage.getItem('chatTheme');
-            if (savedTheme === 'dark') document.body.setAttribute('data-theme', 'dark');
-
-            const savedBg = localStorage.getItem('chatBgImage');
-            if (savedBg) {
-                document.getElementById('chatBox').style.backgroundImage = `url('${savedBg}')`;
-                document.getElementById('wallpaperSubtext').innerText = 'Custom wallpaper active';
-            }
-
-            const savedName = localStorage.getItem('chatNickname');
-            if (savedName) {
-                document.getElementById('userName').innerText = savedName;
-                document.getElementById('sheetUserName').innerText = savedName;
-            }
-
-            const savedPic = localStorage.getItem('chatProfilePic');
-            if (savedPic) {
-                document.getElementById('headerAvatar').style.backgroundImage = `url('${savedPic}')`;
-                document.getElementById('sheetAvatar').style.backgroundImage = `url('${savedPic}')`;
-                document.getElementById('headerAvatar').innerText = '';
-                document.getElementById('sheetAvatar').innerText = '';
-            }
-
-            const savedSize = localStorage.getItem('chatFontSize');
-            if (savedSize) {
-                document.documentElement.style.setProperty('--base-font-size', savedSize);
-                document.getElementById('fontSizeSelect').value = savedSize;
-            }
-
-            scrollToBottom();
-        };
-
         function sendMessage() {
             const input = document.getElementById('msgInput');
             const text = input.value.trim();
@@ -1246,7 +581,6 @@
                 const area = document.getElementById('messagesArea');
                 area.innerHTML += `<div class="msg-bubble msg-sent">${text}</div>`;
                 input.value = '';
-                toggleActionBtn();
                 scrollToBottom();
             }
         }
